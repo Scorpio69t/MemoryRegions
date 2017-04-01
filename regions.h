@@ -5,11 +5,6 @@ typedef enum { false, true } Boolean;
 
 typedef unsigned short r_size_t;
 
-struct arrays
-{
-
-
-}
 
 Boolean rinit(const char *region_name, r_size_t region_size);
 Boolean rchoose(const char *region_name);

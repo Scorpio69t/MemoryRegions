@@ -11,9 +11,8 @@ int main()
 {
 	Boolean rc;
 
-	rc = rinit("hello", 2016);
+	rc = rinit("KappaKeepo", 2010);
 
-	printf("%i\n", rc);
 
 	return EXIT_SUCCESS;
 }
