@@ -1,3 +1,5 @@
+// linked list taken from lecture notes
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -39,27 +41,45 @@ int getSize()
 }
 
 
+
+
+char *currentName()
+{
+  //printf("%lu###\n", strlen(traverseNode->data));
+  return traverseNode->data;
+}
+
+
+
 // "build" will create an ordered linked list consisting
 // of the first "size" even integers.
-void build(const char *region_name, unsigned short region_size)
+void addNode(const char *region_name, unsigned short region_size)
 {
-
   node *newNode = NULL;
 
   // make sure we don't have a list yet
   //destroy();
-
-
   newNode = malloc( sizeof( node ) );
-  newNode->name = malloc(sizeof(region_name));
-  strcpy(newNode->name, region_name);
-  newNode->data = malloc(sizeof(char) * region_size);
+  newNode->data = malloc(strlen(region_name) + 1);  
+  strncpy(newNode->data, region_name, strlen(region_name));
+  //strcpy(newNode->data, region_name);
+  //newNode->name[strlen(region_name)] = '\0'; //add null terminator at end of string, but breaks strncmp here
+  //newNode->data = malloc(sizeof(char) * region_size);
 
-  //(*newNode).data[5] = 'w';
+  for(int i = 0; i < strlen(region_name); i++) 
+  {
+    
+  }
+
   newNode->next = top;
-
   top = newNode;
-  printf("%s\n", newNode->name);
+
+  //printf("%s", top->name); //remove after.  prints extra square character so i changed it to for loop
+
+
+  //remove after
+  assert(strcmp(top->data, region_name) == 0);
+
 
   listSize++;
 }
@@ -75,7 +95,7 @@ void build(const char *region_name, unsigned short region_size)
 
 // starts a list traversal by getting the data at top.
 // returns false if top == NULL.
-int firstNode( int *item )
+int firstNode()
 {
   int result = 0;
   
@@ -83,8 +103,8 @@ int firstNode( int *item )
   {
     //*item = top->number;
     
-    traverseNode = top->next;
-  
+    traverseNode = top;
+    
     result = 1;
   }  
   
@@ -94,7 +114,7 @@ int firstNode( int *item )
 
 // gets the data at the current traversal node and increments the traversal.
 // returns false if we're at the end of the list.
-int nextNode( int *item )
+int nextNode()
 {
   int result = 0;
   
@@ -103,7 +123,6 @@ int nextNode( int *item )
     //*item = traverseNode->number;
     
     traverseNode = traverseNode->next;
-    
     result = 1;
   }
   
@@ -113,7 +132,7 @@ int nextNode( int *item )
 
 // "print" will output an object's entire linked list 
 // to the standard output device -- one "number" per line.
-void print()
+/*void print()
 {
   int value;
   
@@ -124,6 +143,6 @@ void print()
       printf( "%d\n", value );
     } while ( nextNode( &value ) );
   }
-}
+}*/
 
 

@@ -8,18 +8,19 @@ typedef struct Node node;
 
 struct Node
 {
-	char *name;
+	//char *name;
   	char *data;
   	node *next;
 };
 
 
 void destroy();
-void build(const char *region_name, unsigned short region_size);
+void addNode(const char *region_name, unsigned short region_size);
 //void newList(const char *region_name, r_size_t region_size);
+char *currentName();
 int getSize();
-int firstNode(int *item);
-int nextNode(int *item);
+int firstNode();
+int nextNode();
 void print();
 
 

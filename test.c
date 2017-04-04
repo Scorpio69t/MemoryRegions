@@ -12,7 +12,11 @@ int main()
 	Boolean rc;
 
 	rc = rinit("KappaKeepo", 2010);
+	assert(rc);
+	rc = rinit("OmgWtfBbq", 2010);
+	assert(rc);
 
+	printf("%s\n", rchosen()); //maybe remove
 
 	return EXIT_SUCCESS;
 }
