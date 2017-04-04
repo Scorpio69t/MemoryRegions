@@ -45,8 +45,19 @@ int getSize()
 
 char *currentName()
 {
+  char *temp;
+
+  if(traverseNode != NULL)
+  {
+    temp = malloc(strlen(traverseNode->data) + 1);
+    strncpy(temp, traverseNode->data, strlen(traverseNode->data));
+  }
+  else
+  {
+    temp = NULL;
+  }
   //printf("%lu###\n", strlen(traverseNode->data));
-  return traverseNode->data;
+  return temp;
 }
 
 
@@ -62,14 +73,7 @@ void addNode(const char *region_name, unsigned short region_size)
   newNode = malloc( sizeof( node ) );
   newNode->data = malloc(strlen(region_name) + 1);  
   strncpy(newNode->data, region_name, strlen(region_name));
-  //strcpy(newNode->data, region_name);
-  //newNode->name[strlen(region_name)] = '\0'; //add null terminator at end of string, but breaks strncmp here
-  //newNode->data = malloc(sizeof(char) * region_size);
 
-  for(int i = 0; i < strlen(region_name); i++) 
-  {
-    
-  }
 
   newNode->next = top;
   top = newNode;
@@ -77,10 +81,10 @@ void addNode(const char *region_name, unsigned short region_size)
   //printf("%s", top->name); //remove after.  prints extra square character so i changed it to for loop
 
 
-  //remove after
+  //make sure strings being copied are equal
   assert(strcmp(top->data, region_name) == 0);
 
-
+  //increment list size after each node is added
   listSize++;
 }
 
@@ -101,7 +105,7 @@ int firstNode()
   
   if ( top )
   {
-    //*item = top->number;
+    //*item = top->data;
     
     traverseNode = top;
     
@@ -129,6 +133,40 @@ int nextNode()
   return result;
 }
 
+
+//go through list to find a region called region_name
+int chooseNode(const char *region_name)
+{
+  int result;
+  traverseNode = top;
+  node *temp = NULL;
+
+  result = 0;
+
+  if(traverseNode != NULL && getSize() > 0)
+  {
+    if(strcmp(region_name, traverseNode->data) == 0)
+    {
+      result = 1;
+    }
+  }
+
+  while ( traverseNode != NULL && result == 0 && getSize() > 0)
+  {
+    // flip order to see it blow up...
+    temp = traverseNode;
+    traverseNode = traverseNode->next;
+    if(traverseNode != NULL)
+    {
+      if(strcmp(region_name, traverseNode->data) == 0)
+      {
+        result = 1;
+      }
+    }
+  }
+
+  return result;
+}
 
 // "print" will output an object's entire linked list 
 // to the standard output device -- one "number" per line.

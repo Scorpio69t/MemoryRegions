@@ -22,7 +22,7 @@ int getSize();
 int firstNode();
 int nextNode();
 void print();
-
+int chooseNode(const char *region_name);
 
 #endif
 

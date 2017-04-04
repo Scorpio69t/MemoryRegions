@@ -56,7 +56,7 @@ Boolean rinit(const char *region_name, r_size_t region_size)
 		addNode(region_name, region_size);
 	}
 
-printf("%i list size\n", getSize()); //remove after
+	
 	return result;
 }
 
@@ -65,20 +65,18 @@ printf("%i list size\n", getSize()); //remove after
 
 const char *rchosen()
 {
-	char *temp;
-
-	//remove these
-	firstNode();
-	nextNode();
-
-	temp = malloc(strlen(currentName()));
-	strncpy(temp, currentName(), strlen(currentName()));
-
-	
 	return currentName();
 }
 
 
 
 
+Boolean rchoose(const char *region_name)
+{
+	Boolean result;
+
+	result = chooseNode(region_name);
+
+	return result;
+}
 
