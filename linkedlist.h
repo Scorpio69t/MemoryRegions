@@ -9,7 +9,11 @@ typedef struct Node node;
 struct Node
 {
 	//char *name;
-  	char *data;
+	void *region;
+  	void *data;
+  	int blockTotalSize;
+  	int usedBlocks;
+
   	node *next;
 };
 

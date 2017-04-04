@@ -3,7 +3,7 @@
 #include <assert.h>
 
 #include "regions.h"
-#include "linkedlist.h"
+#include "linkedlist.h"  //might not need to include this for main/test
 
 
 
@@ -11,14 +11,16 @@ int main()
 {
 	Boolean rc;
 
-	rc = rinit("KappaKeepo", 2010);
-	assert(rc);
-	rc = rinit("OmgWtfBbq", 2010);
-	assert(rc);
-	rc = rinit("Heartstone", 2010);
-	assert(rc);
-	printf("%i list size\n", getSize()); //remove after
 
+	rc = rinit("OmgWtfBbq", 756);
+	assert(rc);
+	rc = rinit("Heartstone", 8956);
+	assert(rc);
+	rc = rinit("abcdefghij", 1026);
+	assert(rc);
+
+	printf("%i list size\n", getSize()); //remove after
+	printf("Chosen: %s\n\n", rchosen());
 
 
 	rc = rchoose("Heartstone");
@@ -33,6 +35,16 @@ int main()
 	printf("Chosen: %s\n\n", rchosen());
 
 
+	rc = rchoose("abcdefghij");
+	if(rc == 0)
+	{
+		printf("cant find name abcdefghij\n");
+	}
+	else
+	{
+		printf("found name abcdefghij\n");
+	}
+	printf("Chosen: %s\n\n", rchosen());
 
 
 	rc = rchoose("OmgWtfBbq");
@@ -61,16 +73,7 @@ int main()
 	printf("Chosen: %s\n\n", rchosen()); 
 
 
-	rc = rchoose("KappaKeepo");
-	if(rc == 0)
-	{
-		printf("cant find name KappaKeepo\n");
-	}
-	else
-	{
-		printf("found name KappaKeepo\n");
-	}
-	printf("Chosen: %s\n\n", rchosen());
+
 
 
 	return EXIT_SUCCESS;

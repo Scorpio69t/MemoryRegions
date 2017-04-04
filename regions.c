@@ -31,6 +31,10 @@ Boolean rinit(const char *region_name, r_size_t region_size)
 
 	result = true;
 
+	if(getSize() == 0)
+	{
+		addNode("", 1); //first node added will be empty
+	}
 
 	if(region_size >= 1)
 	{
@@ -42,18 +46,15 @@ Boolean rinit(const char *region_name, r_size_t region_size)
 		result = false;
 	}
 
-
-	//put loop here to check for unique name
-	for(int i = 0; i < getSize(); i++)
-	{
-
-	}
-
+	//check if name already exists in list
+	result = chooseNode(region_name);
+	result = !result;
 
 	//initialize memory region if size and name test pass
 	if(result)
 	{
 		addNode(region_name, region_size);
+		rchoose(region_name);
 	}
 
 	
@@ -62,7 +63,7 @@ Boolean rinit(const char *region_name, r_size_t region_size)
 
 
 
-
+// return name of currently chosen node and null if a node isn't chosen
 const char *rchosen()
 {
 	return currentName();
@@ -70,7 +71,8 @@ const char *rchosen()
 
 
 
-
+// choose a region matching the name from region_name
+// returns true if it exists and false if it doesn't
 Boolean rchoose(const char *region_name)
 {
 	Boolean result;
@@ -79,4 +81,9 @@ Boolean rchoose(const char *region_name)
 
 	return result;
 }
+
+
+
+
+
 

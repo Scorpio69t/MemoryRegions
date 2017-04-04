@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+//#include <malloc/malloc.h>
+
 #include "linkedlist.h"
 
 
@@ -68,13 +70,29 @@ void addNode(const char *region_name, unsigned short region_size)
 {
   node *newNode = NULL;
 
-  // make sure we don't have a list yet
-  //destroy();
+
   newNode = malloc( sizeof( node ) );
-  newNode->data = malloc(strlen(region_name) + 1);  
+  newNode->data = (char *)malloc(sizeof(char) * strlen(region_name));  
   strncpy(newNode->data, region_name, strlen(region_name));
 
+  newNode->region = (char *)malloc(region_size * sizeof(char));
 
+  /*if(newNode->region != NULL)
+  {
+    printf("malloc worked for: %s\n", region_name);
+  }
+  else
+  {
+    printf("malloc failed for: %s\n", region_name);
+  }*/
+  assert(newNode->region != NULL);
+  newNode->usedBlocks = 0;
+  printf("%i\n",newNode->usedBlocks);
+  newNode->blockTotalSize = region_size;
+
+  //int n = sizeof(newNode->region);
+  printf("%hu sizetestfor: %s\n", region_size, region_name);
+  //printf("%zu sizeoftest\n\n", malloc_size(newNode->region));
   newNode->next = top;
   top = newNode;
 
@@ -82,10 +100,11 @@ void addNode(const char *region_name, unsigned short region_size)
 
 
   //make sure strings being copied are equal
-  assert(strcmp(top->data, region_name) == 0);
+  //assert(strcmp(top->data, region_name) == 0);
 
   //increment list size after each node is added
   listSize++;
+  
 }
 
 
@@ -139,10 +158,10 @@ int chooseNode(const char *region_name)
 {
   int result;
   traverseNode = top;
-  node *temp = NULL;
 
   result = 0;
 
+  //this block used for top node
   if(traverseNode != NULL && getSize() > 0)
   {
     if(strcmp(region_name, traverseNode->data) == 0)
@@ -151,10 +170,9 @@ int chooseNode(const char *region_name)
     }
   }
 
-  while ( traverseNode != NULL && result == 0 && getSize() > 0)
+  //go through rest of nodes until end of list if region_name didn't match the first node
+  while(traverseNode != NULL && result == 0 && getSize() > 0)
   {
-    // flip order to see it blow up...
-    temp = traverseNode;
     traverseNode = traverseNode->next;
     if(traverseNode != NULL)
     {
