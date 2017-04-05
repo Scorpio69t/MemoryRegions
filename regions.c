@@ -53,7 +53,7 @@ Boolean rinit(const char *region_name, r_size_t region_size)
 	//initialize memory region if size and name test pass
 	if(result)
 	{
-		addNode(region_name, region_size);
+		result = addNode(region_name, region_size);
 		rchoose(region_name);
 	}
 
@@ -83,7 +83,9 @@ Boolean rchoose(const char *region_name)
 }
 
 
-
-
+/*void destroyList()
+{
+	destroy();
+}*/
 
 

@@ -12,69 +12,74 @@ int main()
 	Boolean rc;
 
 
-	rc = rinit("OmgWtfBbq", 756);
+	rc = rinit("Batman", 756);
 	assert(rc);
-	rc = rinit("Heartstone", 8956);
+	rc = rinit("unicycle frog", 8956);
 	assert(rc);
-	rc = rinit("abcdefghij", 1026);
+	rc = rinit("qwertyuiopqwertyuiopqwertyuiopqwertyuiopqwertyuiop", 1026);
 	assert(rc);
 
 	printf("%i list size\n", getSize()); //remove after
 	printf("Chosen: %s\n\n", rchosen());
 
 
-	rc = rchoose("Heartstone");
+	rc = rchoose("Batman");
 	if(rc == 0)
 	{
-		printf("cant find name Heartstone\n");
+		printf("cant find name Batman\n");
 	}
 	else
 	{
-		printf("found name Heartstone\n");
+		printf("found name Batman\n");
 	}
 	printf("Chosen: %s\n\n", rchosen());
 
 
-	rc = rchoose("abcdefghij");
+	rc = rchoose("qwertyuiopqwertyuiopqwertyuiopqwertyuiopqwertyuiop");
 	if(rc == 0)
 	{
-		printf("cant find name abcdefghij\n");
+		printf("cant find name qwertyuiopqwertyuiopqwertyuiopqwertyuiopqwertyuiop\n");
 	}
 	else
 	{
-		printf("found name abcdefghij\n");
+		printf("found name qwertyuiopqwertyuiopqwertyuiopqwertyuiopqwertyuiop\n");
 	}
 	printf("Chosen: %s\n\n", rchosen());
 
 
-	rc = rchoose("OmgWtfBbq");
+	rc = rchoose("unicycle frog");
 	if(rc == 0)
 	{
-		printf("cant find name OmgWtfBbq\n");
+		printf("cant find name unicycle frog\n");
 	}
 	else
 	{
-		printf("found name OmgWtfBbq\n");
+		printf("found name unicycle frog\n");
 	}
 	printf("Chosen: %s\n\n", rchosen());
 
 
 
 
-	rc = rchoose("kappa");
+	rc = rchoose("thisdoesntexist");
 	if(rc == 0)
 	{
-		printf("cant find name kappa\n");
+		printf("cant find name thisdoesntexist\n");
 	}
 	else
 	{
-		printf("found name kappa\n");
+		printf("found name thisdoesntexist\n");
 	}
 	printf("Chosen: %s\n\n", rchosen()); 
 
 
 
 
+	/*printf("-------------------------\n");
+	destroyList();
+	printf("-------------------------\n");*/
 
+
+	printf("Program completed normally.");
 	return EXIT_SUCCESS;
 }

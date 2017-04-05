@@ -1,4 +1,4 @@
-// linked list taken from lecture notes
+// linked list taken from lecture notesd
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,14 +25,19 @@ void destroy()
 
   while ( curr != NULL )
   {
-    // flip order to see it blow up...
+    
     temp = curr;
+    //printf("%s, region size: %zu, data size: %zu, node size: %zu\n", temp->data, malloc_size(temp->region), malloc_size(temp->data), malloc_size(temp));
     curr = curr->next;
-
+    free(temp->region);
+    free(temp->data);
+    //printf("%s, region size: %zu, data size: %zu, node size: %zu FREED ARRAYS\n", temp->data, malloc_size(temp->region), malloc_size(temp->data), malloc_size(temp));
     free( temp );
+    //printf("%s, region size: %zu, data size: %zu, node size: %zu FREED NODE\n\n", temp->data, malloc_size(temp->region), malloc_size(temp->data), malloc_size(temp));
   }
 
   top = NULL;
+  printf("LIST FREED\n"); //remove this after
 }
 
 
@@ -52,7 +57,11 @@ char *currentName()
   if(traverseNode != NULL)
   {
     temp = malloc(strlen(traverseNode->data) + 1);
-    strncpy(temp, traverseNode->data, strlen(traverseNode->data));
+    assert(temp != NULL);
+    if(temp != NULL)
+    {
+      strncpy(temp, traverseNode->data, strlen(traverseNode->data));
+    }
   }
   else
   {
@@ -66,46 +75,68 @@ char *currentName()
 
 // "build" will create an ordered linked list consisting
 // of the first "size" even integers.
-void addNode(const char *region_name, unsigned short region_size)
+int addNode(const char *region_name, unsigned short region_size)
 {
+  int result;
   node *newNode = NULL;
 
+  result = 1;
 
   newNode = malloc( sizeof( node ) );
-  newNode->data = (char *)malloc(sizeof(char) * strlen(region_name));  
-  strncpy(newNode->data, region_name, strlen(region_name));
+  assert(newNode != NULL);
 
-  newNode->region = (char *)malloc(region_size * sizeof(char));
-
-  /*if(newNode->region != NULL)
+  if(newNode != NULL)
   {
-    printf("malloc worked for: %s\n", region_name);
+    newNode->data = (char *)malloc(sizeof(char) * strlen(region_name));  
+    assert(newNode->data != NULL);
   }
   else
   {
-    printf("malloc failed for: %s\n", region_name);
-  }*/
+    result = 0;
+  }
+
+  if(newNode->data != NULL)
+  {
+    strncpy(newNode->data, region_name, strlen(region_name));
+  }
+  else
+  {
+    result = 0;
+  }
+
+
+  newNode->region = (char *)malloc(region_size * sizeof(char));
   assert(newNode->region != NULL);
-  newNode->usedBlocks = 0;
-  printf("%i\n",newNode->usedBlocks);
-  newNode->blockTotalSize = region_size;
 
-  //int n = sizeof(newNode->region);
-  printf("%hu sizetestfor: %s\n", region_size, region_name);
-  //printf("%zu sizeoftest\n\n", malloc_size(newNode->region));
-  newNode->next = top;
-  top = newNode;
+  if(newNode->region != NULL)
+  {
+    newNode->usedBlocks = 0;
+    //printf("%i\n",newNode->usedBlocks);
+    newNode->blockTotalSize = region_size;
 
-  //printf("%s", top->name); //remove after.  prints extra square character so i changed it to for loop
+    //int n = sizeof(newNode->region);
+    //printf("%hu sizetestfor: %s\n", region_size, region_name);
+    //printf("%zu sizeoftest\n\n", malloc_size(newNode->region));
+    newNode->next = top;
+    top = newNode;
+
+    //printf("%s", top->name); //remove after.  prints extra square character so i changed it to for loop
 
 
-  //make sure strings being copied are equal
-  //assert(strcmp(top->data, region_name) == 0);
+    //make sure strings being copied are equal
+    //assert(strcmp(top->data, region_name) == 0);
 
-  //increment list size after each node is added
-  listSize++;
-  
+    //increment list size after each node is added
+    listSize++;
+  }
+  else
+  {
+    result = 0;
+  }
+
+  return result;
 }
+
 
 
 

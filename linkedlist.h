@@ -19,14 +19,14 @@ struct Node
 
 
 void destroy();
-void addNode(const char *region_name, unsigned short region_size);
-//void newList(const char *region_name, r_size_t region_size);
+int addNode(const char *region_name, unsigned short region_size);
 char *currentName();
 int getSize();
 int firstNode();
 int nextNode();
 void print();
 int chooseNode(const char *region_name);
+
 
 #endif
 
