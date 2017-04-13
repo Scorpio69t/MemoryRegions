@@ -32,8 +32,9 @@ LinkedList newList();
 int getSize(LinkedList list);
 LinkedList addNode(LinkedList list, const char *region_name, short region_size);
 int findNode(LinkedList list, const char *region_name);
-
-
+LinkedList findRegion(LinkedList list, const char *region_name);
+LinkedList removeNode(LinkedList list, const char *region_name);
+void printRegions(LinkedList list);
 
 #endif
 

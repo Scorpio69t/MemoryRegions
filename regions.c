@@ -31,6 +31,7 @@ r_size_t roundSize(r_size_t region_size)
 
 
 
+//create and select that region if it doesn't already exist 
 Boolean rinit(const char *region_name, r_size_t region_size)
 {
 	Boolean result;
@@ -74,14 +75,14 @@ Boolean rinit(const char *region_name, r_size_t region_size)
 		if(nodeCount == 0)
 		{
 			myList = addNode(myList, region_name, region_size);
-			printf("ADDED NODE %s, ssize: %d\n", region_name, getSize(myList));	
+			printf("ADDED NODE %s, list size: %d\n", region_name, getSize(myList));	
 			nodeCount = myList->size;
 			rchoose(region_name);
 			//printf("ADDED NODE %s, size: %d\n", rchosen(), getSize(myList));	
 		}
 		else if(nodeCount > 0)
 		{	
-			if(findNode(myList, region_name))
+			if(findNode(myList, region_name)) //if name already exists
 			{
 				printf("Region with name %s already exists\n", region_name);
 				result = false;
@@ -89,7 +90,7 @@ Boolean rinit(const char *region_name, r_size_t region_size)
 			else
 			{
 				myList = addNode(myList, region_name, region_size);
-				printf("ADDED NODE %s, size: %d\n", region_name, getSize(myList));	
+				printf("ADDED NODE %s, list size: %d\n", region_name, getSize(myList));	
 				nodeCount = myList->size;
 				rchoose(region_name);
 				//printf("ADDED NODE %s, size: %d\n", rchosen(), getSize(myList));	
@@ -97,16 +98,17 @@ Boolean rinit(const char *region_name, r_size_t region_size)
 		}
 		else
 		{
-			printf("Region with name already exists\n");
+			printf("Cannot add region.\n");
 			result = false;
 		}
 		//result = addNode(region_name, region_size);
 		//rchoose(region_name);
 	}
 
-	printf("number of regions: %i\n", nodeCount);
+	printf("number of regions: %i, result: %i\n", nodeCount, result);
 	return result;
 }
+
 
 
 
@@ -121,8 +123,17 @@ const char *rchosen()
 	}
 	else
 	{
-		currentName = malloc(sizeof(char) * strlen(myList->chosenRegion->name));
-		strncpy(currentName, myList->chosenRegion->name, strlen(myList->chosenRegion->name));
+		currentName = malloc(sizeof(char) * strlen(myList->chosenRegion->name) + 1);
+		assert(currentName != NULL);
+		if(currentName != NULL)
+		{
+			strncpy(currentName, myList->chosenRegion->name, strlen(myList->chosenRegion->name));
+		}
+		else
+		{
+			printf("Malloc failed!\n");
+			currentName = NULL;
+		}
 	}
 
 	return currentName;
@@ -130,30 +141,52 @@ const char *rchosen()
 
 
 
+
 // choose a region matching the name from region_name
 // returns true if it exists and false if it doesn't
 Boolean rchoose(const char *region_name)
 {
-	Boolean result = true; // remove = true later
+	Boolean result; // remove = true later
 
-	result = findNode(myList, region_name);
+	myList = findRegion(myList, region_name);
 	//printf("%s CHOEENESNN REGION\n", myList->chosenRegion->name);
-	if(result)
+	if(myList->chosenRegion == NULL)
 	{
-		pickedRegion = 1;
+		pickedRegion = 0;
+		result = false;
 	}
 	else
 	{
-		pickedRegion = 0;
+		pickedRegion = 1;
+		result = true;
 	}
 
 	return result;
 }
 
 
-/*void destroyList()
+
+
+
+
+
+//remove a region from list
+void rdestroy(const char *region_name)
 {
-	destroy();
-}*/
+	myList = removeNode(myList, region_name);
+	nodeCount = myList->size;
+	printf("SIZE: %i\n", myList->size);
+
+	if(myList->chosenRegion == NULL)
+	{
+		pickedRegion = 0;
+	}
+}
 
 
+
+
+void rdump()
+{
+	printRegions(myList);
+}
