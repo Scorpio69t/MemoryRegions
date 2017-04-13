@@ -71,7 +71,40 @@ LinkedList addNode(LinkedList list, const char *region_name, short region_size)
 }
 
 
+
+//check if a node with name matching region_name exists
 int findNode(LinkedList list, const char *region_name)
+{
+  int result;
+  int count;
+  node *currentNode;
+
+  result = 0;
+  count = 0;
+  currentNode = list->first;
+
+
+  while(count < list->size && result == 0) //might need to be <= list->size
+  {
+    if(strcmp(region_name, currentNode->name) == 0)
+    {
+      result = 1;
+      list->chosenRegion = currentNode;
+    }
+    else
+    {
+      count++;
+      currentNode = currentNode->next;
+    }
+
+  }
+
+  return result;
+}
+
+
+//choose and return node matching region_name, else returns a NULL region
+/*node chooseNode(LinkedList list, const char *region_name)
 {
   int result;
   int count;
@@ -95,7 +128,13 @@ int findNode(LinkedList list, const char *region_name)
     }
 
   }
-      printf("####### %i\n", result);
-  return result;
-}
+
+  if(result == 0)
+  {
+    currentNode = NULL;
+  }
+
+  return currentNode;
+}*/
+
 

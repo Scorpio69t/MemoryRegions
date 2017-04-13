@@ -23,7 +23,15 @@ int main()
 	rc = rinit("qwerty", 987);
 	rc = rinit("datboi", 456);
 	rc = rinit("qwerty", 421);
-	rc = rinit("datboi", 456);
+	//rc = rinit("datboi", 456);
+
+	printf("CHOSEN REGION: %s\n", rchosen());
+	rc = rchoose("Batman");
+	printf("CHOSEN REGION: %s\n", rchosen());
+	rc = rchoose("awdawdawdawd");
+	printf("CHOSEN REGION: %s\n", rchosen());
+	rc = rchoose("datboi");
+	printf("CHOSEN REGION: %s\n", rchosen());
 	//printf("%i list size\n", getSize()); //remove after
 	//printf("Chosen: %s\n\n", rchosen());
 

@@ -23,6 +23,7 @@ struct linkedList
 {
 	int size;
 	node *first;
+	node *chosenRegion;
 };
 
 

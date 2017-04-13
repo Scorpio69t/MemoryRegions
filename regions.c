@@ -8,6 +8,7 @@
 
 r_size_t roundSize(r_size_t);
 static int nodeCount = 0;
+int pickedRegion;
 LinkedList myList;
 
 
@@ -75,6 +76,8 @@ Boolean rinit(const char *region_name, r_size_t region_size)
 			myList = addNode(myList, region_name, region_size);
 			printf("ADDED NODE %s, ssize: %d\n", region_name, getSize(myList));	
 			nodeCount = myList->size;
+			rchoose(region_name);
+			//printf("ADDED NODE %s, size: %d\n", rchosen(), getSize(myList));	
 		}
 		else if(nodeCount > 0)
 		{	
@@ -88,6 +91,8 @@ Boolean rinit(const char *region_name, r_size_t region_size)
 				myList = addNode(myList, region_name, region_size);
 				printf("ADDED NODE %s, size: %d\n", region_name, getSize(myList));	
 				nodeCount = myList->size;
+				rchoose(region_name);
+				//printf("ADDED NODE %s, size: %d\n", rchosen(), getSize(myList));	
 			}
 		}
 		else
@@ -99,17 +104,29 @@ Boolean rinit(const char *region_name, r_size_t region_size)
 		//rchoose(region_name);
 	}
 
-	
+	printf("number of regions: %i\n", nodeCount);
 	return result;
 }
 
 
 
 // return name of currently chosen node and null if a node isn't chosen
-/*const char *rchosen()
+const char *rchosen()
 {
-	return currentName();
-}*/
+	char *currentName;
+
+	if(pickedRegion == 0)
+	{
+		currentName = NULL;
+	}
+	else
+	{
+		currentName = malloc(sizeof(char) * strlen(myList->chosenRegion->name));
+		strncpy(currentName, myList->chosenRegion->name, strlen(myList->chosenRegion->name));
+	}
+
+	return currentName;
+}
 
 
 
@@ -119,7 +136,16 @@ Boolean rchoose(const char *region_name)
 {
 	Boolean result = true; // remove = true later
 
-	//result = chooseNode(region_name);
+	result = findNode(myList, region_name);
+	//printf("%s CHOEENESNN REGION\n", myList->chosenRegion->name);
+	if(result)
+	{
+		pickedRegion = 1;
+	}
+	else
+	{
+		pickedRegion = 0;
+	}
 
 	return result;
 }
