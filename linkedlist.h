@@ -30,7 +30,7 @@ struct linkedList
 LinkedList newList();
 int getSize(LinkedList list);
 LinkedList addNode(LinkedList list, const char *region_name, short region_size);
-
+int findNode(LinkedList list, const char *region_name);
 
 
 

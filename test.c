@@ -13,12 +13,17 @@ int main()
 
 
 	rc = rinit("Batman", 756);
-	assert(rc);
+	//assert(rc);
 	//rc = rinit("unicycle frog", 8956);
-	assert(rc);
+	//assert(rc);
 	//rc = rinit("qwertyuiopqwertyuiopqwertyuiopqwertyuiopqwertyuiop", 1026);
-	assert(rc);
+	//assert(rc);
 
+	rc = rinit("Batman", 420);
+	rc = rinit("qwerty", 987);
+	rc = rinit("datboi", 456);
+	rc = rinit("qwerty", 421);
+	rc = rinit("datboi", 456);
 	//printf("%i list size\n", getSize()); //remove after
 	//printf("Chosen: %s\n\n", rchosen());
 

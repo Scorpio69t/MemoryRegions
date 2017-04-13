@@ -32,13 +32,14 @@ LinkedList newList()
 }
 
 
+//get number of nodes in list
 int getSize(LinkedList list)
 {
   return list->size;
 }
 
 
-
+//add a new node to beginning of list
 LinkedList addNode(LinkedList list, const char *region_name, short region_size)
 {
   node *newNode;
@@ -70,4 +71,31 @@ LinkedList addNode(LinkedList list, const char *region_name, short region_size)
 }
 
 
+int findNode(LinkedList list, const char *region_name)
+{
+  int result;
+  int count;
+  node *currentNode;
+
+  result = 0;
+  count = 0;
+  currentNode = list->first;
+
+
+  while(count < list->size && result == 0) //might need to be <= list->size
+  {
+    if(strcmp(region_name, currentNode->name) == 0)
+    {
+      result = 1;
+    }
+    else
+    {
+      count++;
+      currentNode = currentNode->next;
+    }
+
+  }
+      printf("####### %i\n", result);
+  return result;
+}
 

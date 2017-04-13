@@ -37,14 +37,14 @@ Boolean rinit(const char *region_name, r_size_t region_size)
 	result = true;
 
 	if(nodeCount == 0)
-	{	
-		//printf("RINIT WORKS + %d\n", getSize(list)):
-		
+	{			
 		myList = newList();
-		
-		if(newList != NULL)
+
+		if(myList != NULL)
 		{
 			printf("RINIT WORKS + %d\n", getSize(myList));
+			//myList = addNode(myList, "", 1);
+
 		}
 		else
 		{
@@ -70,8 +70,31 @@ Boolean rinit(const char *region_name, r_size_t region_size)
 	//initialize memory region if size and name test pass
 	if(result)
 	{
-		myList = addNode(myList, region_name, region_size);
-		printf("ADDED A NODE + %d\n", getSize(myList));
+		if(nodeCount == 0)
+		{
+			myList = addNode(myList, region_name, region_size);
+			printf("ADDED NODE %s, ssize: %d\n", region_name, getSize(myList));	
+			nodeCount = myList->size;
+		}
+		else if(nodeCount > 0)
+		{	
+			if(findNode(myList, region_name))
+			{
+				printf("Region with name %s already exists\n", region_name);
+				result = false;
+			}
+			else
+			{
+				myList = addNode(myList, region_name, region_size);
+				printf("ADDED NODE %s, size: %d\n", region_name, getSize(myList));	
+				nodeCount = myList->size;
+			}
+		}
+		else
+		{
+			printf("Region with name already exists\n");
+			result = false;
+		}
 		//result = addNode(region_name, region_size);
 		//rchoose(region_name);
 	}
