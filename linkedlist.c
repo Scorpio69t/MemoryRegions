@@ -10,226 +10,64 @@
 
 
 
-static int listSize = 0;
-static node *top = NULL;
- 
-// used to track where we are for the list traversal methods
-static node *traverseNode = NULL;
-    
-// "destroy" will deallocate all nodes in a linked list object
-// and will set "top" to NULL.
-void destroy()
-{
-  node *curr = top;
-  node *temp = NULL;
 
-  while ( curr != NULL )
+LinkedList newList()
+{
+  LinkedList newList;
+
+  newList = (LinkedList) malloc(sizeof(LinkedList));
+  assert(newList != NULL);
+
+  if(newList != NULL)
   {
-    
-    temp = curr;
-    //printf("%s, region size: %zu, data size: %zu, node size: %zu\n", temp->data, malloc_size(temp->region), malloc_size(temp->data), malloc_size(temp));
-    curr = curr->next;
-    free(temp->region);
-    free(temp->data);
-    //printf("%s, region size: %zu, data size: %zu, node size: %zu FREED ARRAYS\n", temp->data, malloc_size(temp->region), malloc_size(temp->data), malloc_size(temp));
-    free( temp );
-    //printf("%s, region size: %zu, data size: %zu, node size: %zu FREED NODE\n\n", temp->data, malloc_size(temp->region), malloc_size(temp->data), malloc_size(temp));
-  }
-
-  top = NULL;
-  printf("LIST FREED\n"); //remove this after
-}
-
-
-// returns number of nodes in list
-int getSize()
-{
-  return listSize;
-}
-
-
-
-
-char *currentName()
-{
-  char *temp;
-
-  if(traverseNode != NULL)
-  {
-    temp = malloc(strlen(traverseNode->data) + 1);
-    assert(temp != NULL);
-    if(temp != NULL)
-    {
-      strncpy(temp, traverseNode->data, strlen(traverseNode->data));
-    }
+  newList->first = NULL;
+  newList->size = 0;
   }
   else
   {
-    temp = NULL;
+    newList = NULL;
   }
-  //printf("%lu###\n", strlen(traverseNode->data));
-  return temp;
+
+  return newList;
+}
+
+
+int getSize(LinkedList list)
+{
+  return list->size;
 }
 
 
 
-// "build" will create an ordered linked list consisting
-// of the first "size" even integers.
-int addNode(const char *region_name, unsigned short region_size)
+LinkedList addNode(LinkedList list, const char *region_name, short region_size)
 {
-  int result;
-  node *newNode = NULL;
+  node *newNode;
 
-  result = 1;
-
-  newNode = malloc( sizeof( node ) );
+  newNode = malloc(sizeof(node));
   assert(newNode != NULL);
-
-  if(newNode != NULL)
-  {
-    newNode->data = (char *)malloc(sizeof(char) * strlen(region_name));  
-    assert(newNode->data != NULL);
-  }
-  else
-  {
-    result = 0;
-  }
-
-  if(newNode->data != NULL)
-  {
-    strncpy(newNode->data, region_name, strlen(region_name));
-  }
-  else
-  {
-    result = 0;
-  }
-
-
-  newNode->region = (char *)malloc(region_size * sizeof(char));
+  newNode->name = (char *)malloc(sizeof(char) * strlen(region_name));
+  assert(newNode->name != NULL);
+  newNode->region = malloc(sizeof(char) * region_size);
   assert(newNode->region != NULL);
 
-  if(newNode->region != NULL)
+
+  if(newNode != NULL && newNode->name != NULL && newNode->region != NULL)
   {
-    newNode->usedBlocks = 0;
-    //printf("%i\n",newNode->usedBlocks);
     newNode->blockTotalSize = region_size;
-
-    //int n = sizeof(newNode->region);
-    //printf("%hu sizetestfor: %s\n", region_size, region_name);
-    //printf("%zu sizeoftest\n\n", malloc_size(newNode->region));
-    newNode->next = top;
-    top = newNode;
-
-    //printf("%s", top->name); //remove after.  prints extra square character so i changed it to for loop
-
-
-    //make sure strings being copied are equal
-    //assert(strcmp(top->data, region_name) == 0);
-
-    //increment list size after each node is added
-    listSize++;
+    newNode->usedBlocks = 0;
+    strncpy(newNode->name, region_name, strlen(region_name));
+    newNode->next = list->first;
+    list->first = newNode;
+    list->size++;
   }
   else
   {
-    result = 0;
+    list = NULL;
   }
 
-  return result;
+
+  return list;
 }
 
-
-
-
-/*void newList(const char *region_name, r_size_t region_size)
-{
-  node *newNode = NULL;
-  data = malloc(sizeof(char) * region_size);
-}*/
-
-
-// starts a list traversal by getting the data at top.
-// returns false if top == NULL.
-int firstNode()
-{
-  int result = 0;
-  
-  if ( top )
-  {
-    //*item = top->data;
-    
-    traverseNode = top;
-    
-    result = 1;
-  }  
-  
-  return result;
-}
-
-
-// gets the data at the current traversal node and increments the traversal.
-// returns false if we're at the end of the list.
-int nextNode()
-{
-  int result = 0;
-  
-  if ( traverseNode )
-  {
-    //*item = traverseNode->number;
-    
-    traverseNode = traverseNode->next;
-    result = 1;
-  }
-  
-  return result;
-}
-
-
-//go through list to find a region called region_name
-int chooseNode(const char *region_name)
-{
-  int result;
-  traverseNode = top;
-
-  result = 0;
-
-  //this block used for top node
-  if(traverseNode != NULL && getSize() > 0)
-  {
-    if(strcmp(region_name, traverseNode->data) == 0)
-    {
-      result = 1;
-    }
-  }
-
-  //go through rest of nodes until end of list if region_name didn't match the first node
-  while(traverseNode != NULL && result == 0 && getSize() > 0)
-  {
-    traverseNode = traverseNode->next;
-    if(traverseNode != NULL)
-    {
-      if(strcmp(region_name, traverseNode->data) == 0)
-      {
-        result = 1;
-      }
-    }
-  }
-
-  return result;
-}
-
-// "print" will output an object's entire linked list 
-// to the standard output device -- one "number" per line.
-/*void print()
-{
-  int value;
-  
-  if ( firstNode( &value ) )
-  {
-    do
-    {
-      printf( "%d\n", value );
-    } while ( nextNode( &value ) );
-  }
-}*/
 
 

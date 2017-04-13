@@ -14,16 +14,16 @@ int main()
 
 	rc = rinit("Batman", 756);
 	assert(rc);
-	rc = rinit("unicycle frog", 8956);
+	//rc = rinit("unicycle frog", 8956);
 	assert(rc);
-	rc = rinit("qwertyuiopqwertyuiopqwertyuiopqwertyuiopqwertyuiop", 1026);
+	//rc = rinit("qwertyuiopqwertyuiopqwertyuiopqwertyuiopqwertyuiop", 1026);
 	assert(rc);
 
-	printf("%i list size\n", getSize()); //remove after
-	printf("Chosen: %s\n\n", rchosen());
+	//printf("%i list size\n", getSize()); //remove after
+	//printf("Chosen: %s\n\n", rchosen());
 
 
-	rc = rchoose("Batman");
+	/*rc = rchoose("Batman");
 	if(rc == 0)
 	{
 		printf("cant find name Batman\n");
@@ -70,7 +70,7 @@ int main()
 	{
 		printf("found name thisdoesntexist\n");
 	}
-	printf("Chosen: %s\n\n", rchosen()); 
+	printf("Chosen: %s\n\n", rchosen()); */
 
 
 

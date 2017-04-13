@@ -4,13 +4,13 @@
 
 // Linked list node definition
 typedef struct Node node;
-
+typedef struct linkedList *LinkedList;
 
 struct Node
 {
 	//char *name;
 	void *region;
-  	void *data;
+  	char *name;
   	int blockTotalSize;
   	int usedBlocks;
 
@@ -18,14 +18,20 @@ struct Node
 };
 
 
-void destroy();
-int addNode(const char *region_name, unsigned short region_size);
-char *currentName();
-int getSize();
-int firstNode();
-int nextNode();
-void print();
-int chooseNode(const char *region_name);
+
+struct linkedList
+{
+	int size;
+	node *first;
+};
+
+
+
+LinkedList newList();
+int getSize(LinkedList list);
+LinkedList addNode(LinkedList list, const char *region_name, short region_size);
+
+
 
 
 #endif
