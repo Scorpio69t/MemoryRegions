@@ -1,20 +1,21 @@
 #ifndef _LINKEDLIST_H
 #define _LINKEDLIST_H
 
-
+#include "objectindex.h"
 // Linked list node definition
 typedef struct Node node;
 typedef struct linkedList *LinkedList;
 
+
+
 struct Node
 {
-	//char *name;
 	void *region;
-  	char *name;
+	char *name;
   	int blockTotalSize;
   	int usedBlocks;
-
   	node *next;
+  	ObjList myObjList;
 };
 
 

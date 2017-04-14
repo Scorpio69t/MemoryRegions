@@ -1,17 +1,18 @@
-// linked list taken from lecture notesd
+// linked list taken from textbook
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 #include "linkedlist.h"
+#include "objectindex.h"
 //#include <malloc/malloc.h>
 
 
 
 
 
-
+//create a new list if list is empty
 LinkedList newList()
 {
   LinkedList newList;
@@ -21,8 +22,8 @@ LinkedList newList()
 
   if(newList != NULL)
   {
-  newList->first = NULL;
-  newList->size = 0;
+    newList->first = NULL;
+    newList->size = 0;
   }
   else
   {
@@ -59,6 +60,7 @@ LinkedList addNode(LinkedList list, const char *region_name, short region_size)
     newNode->usedBlocks = 0;
     strncpy(newNode->name, region_name, strlen(region_name));
     newNode->next = list->first;
+    newNode->myObjList = newObjList();  //creates object index for pointers to blocks
     list->first = newNode;
     list->size++;
   }

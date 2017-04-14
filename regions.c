@@ -173,12 +173,23 @@ Boolean rchoose(const char *region_name)
 //remove a region from list
 void rdestroy(const char *region_name)
 {
-	myList = removeNode(myList, region_name);
-	nodeCount = myList->size;
-	printf("SIZE: %i\n", myList->size);
-
-	if(myList->chosenRegion == NULL)
+	if(nodeCount > 0)
 	{
+		myList = removeNode(myList, region_name);
+		nodeCount = myList->size;
+		printf("SIZE: %i\n", myList->size);
+
+		if(myList->chosenRegion == NULL)
+		{
+			pickedRegion = 0;
+		}
+	}
+	else if(nodeCount == 0) //this hasn't been tested yet. try by removing everyone node with redestroy in test.c ---------------------------------------------------------------------------------------------
+	{
+		if(myList != NULL)
+		{
+			free(myList);
+		}
 		pickedRegion = 0;
 	}
 }
@@ -190,3 +201,5 @@ void rdump()
 {
 	printRegions(myList);
 }
+
+
