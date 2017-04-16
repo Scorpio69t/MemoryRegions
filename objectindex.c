@@ -31,6 +31,7 @@ ObjList newObjList()
 		newObjList = NULL;
 	}
 
+
 	return newObjList;
 }
 
@@ -52,8 +53,35 @@ ObjList newObjNode(ObjList currentList)
 	newNode = malloc(sizeof(objNode));
 	assert(newNode != NULL);
 
+	if(newNode != NULL)
+	{
+		//check whether there is space to allocate memory 
+		//put size of allocated memory into newNode->blockSize
+	}
+
 	return currentList;
 }
 
 
+//free list of pointers to blocks in object index
+ObjList freePointers(ObjList currentObjList)
+{
+	objNode *current = currentObjList->first;
+	objNode *temp = NULL;
 
+
+	//free every node in object index
+	while(current != NULL)
+	{
+		temp = current;
+		current = current->next;
+
+		free(temp->beginBlock);
+		free(temp->endBlock);
+		free(temp);
+	}
+
+	free(currentObjList->first); //might need to remove this
+
+	return currentObjList;
+}

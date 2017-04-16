@@ -203,3 +203,27 @@ void rdump()
 }
 
 
+
+//allocate block of memory in chosen region if there are enough contiguous bytes
+void *ralloc(r_size_t block_size)
+{
+	void *blockPtr;
+	int freeBlocks;
+
+	freeBlocks = myList->chosenRegion->blockTotalSize - myList->chosenRegion->usedBlocks;
+
+	//check that region to allocate is larger than 0 and less than the amount of free memory remaining
+	if(block_size > 0 && block_size <= freeBlocks)
+	{
+		//this can still return NULL if not enough contiguous empty blocks are found
+		myList = allocateBlock(myList, block_size);  //might need to return list and add struct variable for new blockPtr
+		blockPtr = myList->chosenRegion->newBlock;
+	}
+	else
+	{
+		blockPtr = NULL;
+	}
+
+
+	return blockPtr;
+}

@@ -11,9 +11,10 @@ int main()
 {
 	Boolean rc;
 	char batman[7] = "Batman";
-	char DatBoi[7] = "DatBot";
+	/*char DatBoi[7] = "DatBoi";
 	char qwerty[6] = "qwerty";
-	char omg[13] = "OmgwTfbbQ";
+	char omg[13] = "OmgwTfbbQ";*/
+	char *ca1, *ca2;
 
 	//assert(rc);
 	//rc = rinit("unicycle frog", 8956);
@@ -22,7 +23,10 @@ int main()
 	//assert(rc);
 	rc = rinit(batman, 756);  
 	assert(rc);
-	rc = rinit(batman, 420);
+	ca2 = ralloc(61);
+	ca1 = ralloc(700);
+	printf("ALLOCATING PTR %p, %p\n", ca2, ca1);
+	/*rc = rinit(batman, 420);
 	assert(!rc);
 	rc = rinit(omg, 222); 
 	assert(rc);
@@ -51,7 +55,7 @@ int main()
 	printf("CHOSEN REGION: %s\n", rchosen());
 	rc = rchoose(omg);
 	rdestroy(omg);
-	printf("CHOSEN REGION: %s\n", rchosen());
+	printf("CHOSEN REGION: %s\n", rchosen());*/
 
 
 	rdump();

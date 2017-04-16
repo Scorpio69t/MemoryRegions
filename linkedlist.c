@@ -48,9 +48,10 @@ LinkedList addNode(LinkedList list, const char *region_name, short region_size)
 
   newNode = malloc(sizeof(node));
   assert(newNode != NULL);
-  newNode->name = (char *)malloc(sizeof(char) * strlen(region_name) + 1);
+  newNode->name = malloc(sizeof(char) * strlen(region_name) + 1);
   assert(newNode->name != NULL);
-  newNode->region = (unsigned char *)malloc(sizeof(char) * region_size);
+  //newNode->region = (unsigned char *)malloc(sizeof(char) * region_size);
+  newNode->region = malloc(sizeof(char) * region_size);
   assert(newNode->region != NULL);
 
 
@@ -61,6 +62,15 @@ LinkedList addNode(LinkedList list, const char *region_name, short region_size)
     strncpy(newNode->name, region_name, strlen(region_name));
     newNode->next = list->first;
     newNode->myObjList = newObjList();  //creates object index for pointers to blocks
+
+    //fill region with non zero
+    for(int i = 0; i < newNode->blockTotalSize; i++)
+    {
+      newNode->region[i] = '1';
+      //printf("%c ", newNode->region[i]);
+    }
+    printf("\n");
+
     list->first = newNode;
     list->size++;
   }
@@ -70,6 +80,11 @@ LinkedList addNode(LinkedList list, const char *region_name, short region_size)
     list = NULL;
   }
 
+
+  if(newNode->myObjList == NULL)
+  {
+    list = removeNode(list, region_name);
+  }
 
   return list;
 }
@@ -190,10 +205,9 @@ LinkedList removeNode(LinkedList list, const char *region_name)
 
       free(toRemove->region);
       free(toRemove->name);
-      //add another free to free object index
+      toRemove->myObjList = freePointers(toRemove->myObjList);  //free every node in object index linked list
+      free(toRemove->myObjList);
       free(toRemove);
-      
-      //printf("#########4\n");
     }
     else
     {
@@ -253,6 +267,92 @@ void printRegions(LinkedList list)
 
 
 
+LinkedList allocateBlock(LinkedList list, unsigned short block_size)
+{
+  void *blockPtr = NULL; // remove null
+  char *ptr1;
+
+  //look for contiguous blocks of free bytes in list->chosenRegion
+  blockPtr = findFreeBlocks(*list->chosenRegion, block_size); //maybe remove asterisk *
+
+
+  if(blockPtr != NULL)
+  {
+    list->chosenRegion->newBlock = blockPtr;
+    list->chosenRegion->myObjList = newObjNode(list->chosenRegion->myObjList);
+
+    for(ptr1 = list->chosenRegion->newBlock; ptr1 < list->chosenRegion->newBlock + block_size; ptr1++)
+    {
+      //list->chosenRegion->region[i] = '0';
+      (*ptr1) = '0';
+      printf("%c", (*ptr1));
+    }
+
+    list->chosenRegion->usedBlocks += block_size;
+  }
+
+
+  printf("\n");
+
+  return list;
+}
+
+
+
+
+char *findFreeBlocks(node currentNode, unsigned short block_size)
+{
+  char *startPtr; 
+  char *currentPtr;
+  int emptyCount;
+  int traverseCount;
+  int found;
+
+
+  currentPtr = currentNode.region;
+  startPtr = currentPtr;
+  emptyCount = 0;
+  traverseCount = 0;
+  found = 0;
+
+
+
+
+  while(traverseCount < currentNode.blockTotalSize && found == 0)
+  {
+    if(*currentPtr != '0') //might need to initialise all spaces in region to something other than '0' either in linkedlist.c or regions.c
+    {
+      emptyCount++;
+    }
+    else
+    {
+      startPtr = currentPtr + 1;
+      emptyCount = 0;
+    }
+
+    if(emptyCount == block_size)
+    {
+      found = 1;
+    }
+
+    currentPtr = currentPtr + 1;
+    traverseCount++;
+  }
+
+
+
+
+
+  //pointer arthmetic to traverse region and find block space
+  // http://www.cs.umanitoba.ca/~fbristow/lectures/comp2160/lecture23-mar22/lecture23-mar22.html?print-pdf#/
+
+  if(found == 0)
+  {
+    startPtr = NULL;
+  }
+
+  return startPtr;
+}
 
 
 

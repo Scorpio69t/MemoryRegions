@@ -10,8 +10,9 @@ typedef struct linkedList *LinkedList;
 
 struct Node
 {
-	void *region;
+	char *region;  //might need to be void?
 	char *name;
+	char *newBlock;
   	int blockTotalSize;
   	int usedBlocks;
   	node *next;
@@ -36,6 +37,8 @@ int findNode(LinkedList list, const char *region_name);
 LinkedList findRegion(LinkedList list, const char *region_name);
 LinkedList removeNode(LinkedList list, const char *region_name);
 void printRegions(LinkedList list);
+LinkedList allocateBlock(LinkedList list, unsigned short block_size);
+char *findFreeBlocks(node currentNode, unsigned short block_size);
 
 #endif
 
