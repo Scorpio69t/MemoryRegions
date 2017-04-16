@@ -218,6 +218,7 @@ void *ralloc(r_size_t block_size)
 		//this can still return NULL if not enough contiguous empty blocks are found
 		myList = allocateBlock(myList, block_size);  //might need to return list and add struct variable for new blockPtr
 		blockPtr = myList->chosenRegion->newBlock;
+		myList->chosenRegion->usedBlocks += block_size;
 	}
 	else
 	{

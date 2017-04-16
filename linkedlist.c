@@ -237,7 +237,8 @@ LinkedList removeNode(LinkedList list, const char *region_name)
 
 void printRegions(LinkedList list)
 {
-  int percentFree;
+  double percentFree;
+  int intPercent;
   node *currentNode;
 
   currentNode = list->first;
@@ -247,11 +248,15 @@ void printRegions(LinkedList list)
     for(int i = 0; i < list->size; i++)
     {
       percentFree = currentNode->blockTotalSize - currentNode->usedBlocks;
-      percentFree /= currentNode->blockTotalSize;
-      percentFree *= 100;
+      printf("####### %f\n", percentFree);      
+      percentFree = (percentFree / currentNode->blockTotalSize) * 100;
+      printf("####### %f\n", percentFree);
+      intPercent = percentFree;
+      //percentFree *= 100;
 
-      printf("%s\n", currentNode->name);
-      printf(", Free blocks: %i%%\n", percentFree);  //need to add blocks allocated and block sizes.  %p for block pointers
+      printf("Region name: %s\n", currentNode->name);
+      printPointers(currentNode->myObjList);
+      printf("Free blocks: %i%%\n\n", intPercent);  //need to add blocks allocated and block sizes.  %p for block pointers
       currentNode = currentNode->next;
     }
     printf("End of lists\n");
@@ -279,18 +284,22 @@ LinkedList allocateBlock(LinkedList list, unsigned short block_size)
   if(blockPtr != NULL)
   {
     list->chosenRegion->newBlock = blockPtr;
-    list->chosenRegion->myObjList = newObjNode(list->chosenRegion->myObjList);
+    list->chosenRegion->myObjList = newObjNode(list->chosenRegion->myObjList, blockPtr, block_size);
 
     for(ptr1 = list->chosenRegion->newBlock; ptr1 < list->chosenRegion->newBlock + block_size; ptr1++)
     {
-      //list->chosenRegion->region[i] = '0';
       (*ptr1) = '0';
-      printf("%c", (*ptr1));
     }
 
-    list->chosenRegion->usedBlocks += block_size;
+    //list->chosenRegion->usedBlocks += block_size;
   }
 
+
+  //print whole region to test
+  for(ptr1 = list->chosenRegion->region; ptr1 < list->chosenRegion->region + list->chosenRegion->blockTotalSize; ptr1++)
+  {
+    printf("%c", (*ptr1));
+  }
 
   printf("\n");
 

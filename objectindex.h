@@ -11,7 +11,7 @@ struct ObjectNode
 {
 	char *beginBlock; 
 	char *endBlock;
-	int blockSize;
+	unsigned short blockSize;
 	objNode *next;
 };
 
@@ -20,14 +20,15 @@ struct ObjectList
 {
 	int size;
 	objNode *first;
+	objNode *currentObjNode;
 };
 
 
 
 ObjList newObjList();
 int getNumBlocks(ObjList list);
-ObjList newObjNode(ObjList list);
+ObjList newObjNode(ObjList currentList, void *blockPtr, unsigned short block_size);
 ObjList freePointers(ObjList currentObjList);
-
+void printPointers(ObjList list);
 
 #endif

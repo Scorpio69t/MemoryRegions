@@ -46,7 +46,7 @@ int getNumBlocks(ObjList currentList)
 
 
 //add new node to object index
-ObjList newObjNode(ObjList currentList)
+ObjList newObjNode(ObjList currentList, void *blockPtr, unsigned short block_size)
 {
 	objNode *newNode;
 
@@ -57,6 +57,12 @@ ObjList newObjNode(ObjList currentList)
 	{
 		//check whether there is space to allocate memory 
 		//put size of allocated memory into newNode->blockSize
+		newNode->beginBlock = blockPtr;
+		newNode->blockSize = block_size;
+		newNode->next = currentList->first;
+		currentList->first = newNode;
+		currentList->size++;
+		currentList->currentObjNode = currentList->first;
 	}
 
 	return currentList;
@@ -85,3 +91,19 @@ ObjList freePointers(ObjList currentObjList)
 
 	return currentObjList;
 }
+
+
+void printPointers(ObjList list)
+{
+	objNode *currentNode;
+	currentNode = list->first;
+
+	for(int i = 0; i < list->size; i++)
+	{
+		printf("Block: %p, Size: %i\n", currentNode->beginBlock, currentNode->blockSize);
+		currentNode = currentNode->next;
+	}
+
+}
+
+

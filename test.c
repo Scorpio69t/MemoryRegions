@@ -14,7 +14,7 @@ int main()
 	/*char DatBoi[7] = "DatBoi";
 	char qwerty[6] = "qwerty";
 	char omg[13] = "OmgwTfbbQ";*/
-	char *ca1, *ca2;
+	char *ca1, *ca2, *ca3;
 
 	//assert(rc);
 	//rc = rinit("unicycle frog", 8956);
@@ -23,9 +23,11 @@ int main()
 	//assert(rc);
 	rc = rinit(batman, 756);  
 	assert(rc);
+
+	ca3 = ralloc(300);
 	ca2 = ralloc(61);
-	ca1 = ralloc(700);
-	printf("ALLOCATING PTR %p, %p\n", ca2, ca1);
+	ca1 = ralloc(100);
+	printf("ALLOCATING PTR %p, %p, %p\n", ca3, ca2, ca1);
 	/*rc = rinit(batman, 420);
 	assert(!rc);
 	rc = rinit(omg, 222); 
