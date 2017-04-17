@@ -44,7 +44,7 @@ Boolean rinit(const char *region_name, r_size_t region_size)
 
 		if(myList != NULL)
 		{
-			printf("RINIT WORKS + %d\n", getSize(myList));
+			//printf("RINIT WORKS + %d\n", getSize(myList));
 			//myList = addNode(myList, "", 1);
 
 		}
@@ -75,7 +75,7 @@ Boolean rinit(const char *region_name, r_size_t region_size)
 		if(nodeCount == 0)
 		{
 			myList = addNode(myList, region_name, region_size);
-			printf("ADDED NODE %s, list size: %d\n", region_name, getSize(myList));	
+			//printf("ADDED NODE %s, list size: %d\n", region_name, getSize(myList));	
 			nodeCount = myList->size;
 			rchoose(region_name);
 			//printf("ADDED NODE %s, size: %d\n", rchosen(), getSize(myList));	
@@ -90,7 +90,7 @@ Boolean rinit(const char *region_name, r_size_t region_size)
 			else
 			{
 				myList = addNode(myList, region_name, region_size);
-				printf("ADDED NODE %s, list size: %d\n", region_name, getSize(myList));	
+				//printf("ADDED NODE %s, list size: %d\n", region_name, getSize(myList));	
 				nodeCount = myList->size;
 				rchoose(region_name);
 				//printf("ADDED NODE %s, size: %d\n", rchosen(), getSize(myList));	
@@ -105,7 +105,7 @@ Boolean rinit(const char *region_name, r_size_t region_size)
 		//rchoose(region_name);
 	}
 
-	printf("number of regions: %i, result: %i\n", nodeCount, result);
+	//printf("number of regions: %i, result: %i\n", nodeCount, result);
 
 	return result;
 }
@@ -178,7 +178,7 @@ void rdestroy(const char *region_name)
 	{
 		myList = removeNode(myList, region_name);
 		nodeCount = myList->size;
-		printf("SIZE: %i\n", myList->size);
+		//printf("SIZE: %i\n", myList->size);
 
 		if(myList->chosenRegion == NULL)
 		{
@@ -216,7 +216,7 @@ void rdump()
 	}
 	else
 	{
-		printf("No regions exist.\n");
+		printf("No regions exist.\n\n");
 	}
 }
 
@@ -229,7 +229,7 @@ void *ralloc(r_size_t block_size)
 	int freeBlocks;
 
 	freeBlocks = myList->chosenRegion->blockTotalSize - myList->chosenRegion->usedBlocks;
-	printf("\nBLOCKS FREE %i, ALLOCATING %i\n", freeBlocks, block_size);
+	//printf("\nBLOCKS FREE %i, ALLOCATING %i\n", freeBlocks, block_size);
 	//check that region to allocate is larger than 0 and less than the amount of free memory remaining
 	if(block_size > 0 && block_size < freeBlocks)
 	{

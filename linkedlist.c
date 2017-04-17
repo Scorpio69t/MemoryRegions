@@ -69,7 +69,7 @@ LinkedList addNode(LinkedList list, const char *region_name, short region_size)
       newNode->region[i] = '1';
       //printf("%c ", newNode->region[i]);
     }
-    printf("\n");
+    //printf("\n");
 
     list->first = newNode;
     list->size++;
@@ -202,7 +202,7 @@ LinkedList removeNode(LinkedList list, const char *region_name)
         previousNode->next = currentNode->next;
         //printf("#########3\n");
       }
-      printf("Destroying region: %s\n\n", region_name);
+      //printf("Destroying region: %s\n\n", region_name);
 
       free(toRemove->region);
       free(toRemove->name);
@@ -252,9 +252,9 @@ void printRegions(LinkedList list)
       percentFree = (percentFree / currentNode->blockTotalSize) * 100;
       intPercent = percentFree;
 
-      printf("Region name: %s\n", currentNode->name);
+      printf("\nRegion name: %s\n", currentNode->name);
       printPointers(currentNode->myObjList);
-      printf("Free blocks: %i%%\n\n", intPercent);  //need to add blocks allocated and block sizes.  %p for block pointers
+      printf("Free blocks: %i%%\n", intPercent);  //need to add blocks allocated and block sizes.  %p for block pointers
       currentNode = currentNode->next;
     }
     printf("End of lists.\n\n");
@@ -264,11 +264,11 @@ void printRegions(LinkedList list)
     printf("Empty list.\n\n");
   }
 
-  char *ptr1;
+  /*char *ptr1;
   for(ptr1 = list->chosenRegion->region; ptr1 < list->chosenRegion->region + list->chosenRegion->blockTotalSize; ptr1++)
   {
     printf("%c", (*ptr1));
-  }
+  }*/
 
 }
 
@@ -371,52 +371,12 @@ char *findFreeBlocks(node currentNode, unsigned short block_size)
 
 
 
-
-/*LinkedList rfreeHelper(LinkedList list, void *block_ptr)
-{
-  int size;
-  int found;
-  int count;
-  char *ptr;
-
-  found = 0;
-  count = 0;
-
-  size = findPtr(list->chosenRegion->myObjList, block_ptr);
-int counter = 0;
-  if(size > 0)
-  {
-ptr = block_ptr + size;
-    for(int i = 0; i < size; i++)
-    {
-      
-      (*ptr) = '1';
-      counter++;
-      //printf("****************** %p\n", ptr);
-      ptr++;
-      
-    }
-
-    list->chosenRegion->myObjList = freeBlock(list->chosenRegion->myObjList, block_ptr);
-  }
- 
-
-  char *ptr1;
-    for(ptr1 = list->chosenRegion->newBlock; ptr1 < list->chosenRegion->newBlock + size; ptr1++)
-    {
-      //(*ptr1) = '0';
-    }
-
-  return list;
-}*/
-
-
 LinkedList rfreeHelper(LinkedList list, void *block_ptr)
 {
   char *ptr1;
   char *ptr2;
   int size;
-  printf("%p %p \n", block_ptr, list->chosenRegion->region);
+  //printf("%p %p \n", block_ptr, list->chosenRegion->region);
   size = findPtr(list->chosenRegion->myObjList, block_ptr);
 
   if(size > 0)

@@ -71,31 +71,6 @@ ObjList newObjNode(ObjList currentList, void *blockPtr, unsigned short block_siz
 }
 
 
-//free list of pointers to blocks in object index
-/*ObjList freePointers(ObjList currentList)
-{
-
-	objNode *current = currentList->first;
-	objNode *temp = NULL;
-
-
-	//free every node in object index
-	while(current != NULL)
-	{
-		temp = current;
-		current = current->next;
-		//printf("### %p ###  %i\n", temp->beginBlock, temp->blockSize);
-
-		//these don't work for some reason
-		//free(temp->beginBlock);
-		//free(temp->endBlock);
-		//free(temp);
-	}
-
-	free(currentList->first); //might need to remove this
-
-	return currentList;
-}*/
 
 
 
