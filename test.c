@@ -11,10 +11,10 @@ int main()
 {
 	Boolean rc;
 	char batman[7] = "Batman";
-	/*char DatBoi[7] = "DatBoi";
-	char qwerty[6] = "qwerty";
-	char omg[13] = "OmgwTfbbQ";*/
-	char *ca1, *ca2, *ca3;
+	//char datBoi[8] = "datBoii";
+	//char qwerty[6] = "qwerty";
+	//char omg[13] = "OmgwTfbbQ";
+	char *ca1, *ca2, *ca3, *ca4;
 
 	//assert(rc);
 	//rc = rinit("unicycle frog", 8956);
@@ -24,10 +24,20 @@ int main()
 	rc = rinit(batman, 756);  
 	assert(rc);
 
-	ca3 = ralloc(300);
-	ca2 = ralloc(61);
-	ca1 = ralloc(100);
-	printf("ALLOCATING PTR %p, %p, %p\n", ca3, ca2, ca1);
+	ca1 = ralloc(300);	
+	ca2 = ralloc(100);
+	ca3 = ralloc(69);
+	ca4 = ralloc(256);
+	//rchoose(DatBoi);
+	//ca5 = ralloc(69);
+
+	printf("ALLOCATING PTR %p, %p, %p, %p\n", ca1, ca2, ca3, ca4);
+
+	rdump();
+	rc = rfree(ca2);
+	assert(rc);
+
+	printf("ALLOCATING PTR %p, %p, %p, %p\n", ca1, ca2, ca3, ca4);
 	/*rc = rinit(batman, 420);
 	assert(!rc);
 	rc = rinit(omg, 222); 
@@ -58,9 +68,12 @@ int main()
 	rc = rchoose(omg);
 	rdestroy(omg);
 	printf("CHOSEN REGION: %s\n", rchosen());*/
-
+	//rdestroy(batman);
 
 	rdump();
+	rdestroy(batman);
+	rdump();
+
 
 	printf("\n\nProgram completed normally.\n");
 	return EXIT_SUCCESS;

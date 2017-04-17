@@ -10,7 +10,7 @@ typedef struct ObjectList *ObjList;
 struct ObjectNode
 {
 	char *beginBlock; 
-	char *endBlock;
+	//char *endBlock;
 	unsigned short blockSize;
 	objNode *next;
 };
@@ -19,8 +19,9 @@ struct ObjectNode
 struct ObjectList
 {
 	int size;
+	int blocksFilled;
 	objNode *first;
-	objNode *currentObjNode;
+	//objNode *currentObjNode;
 };
 
 
@@ -28,7 +29,9 @@ struct ObjectList
 ObjList newObjList();
 int getNumBlocks(ObjList list);
 ObjList newObjNode(ObjList currentList, void *blockPtr, unsigned short block_size);
-ObjList freePointers(ObjList currentObjList);
+ObjList freePointers(ObjList currentList);
 void printPointers(ObjList list);
+ObjList freeBlock(ObjList list, void *block_ptr);
+int findPtr(ObjList list, void *block_ptr);
 
 #endif

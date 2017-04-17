@@ -25,6 +25,7 @@ ObjList newObjList()
 	{
 		newObjList->first = NULL;
 		newObjList->size = 0;
+		newObjList->blocksFilled = 0;
 	}
 	else
 	{
@@ -62,7 +63,8 @@ ObjList newObjNode(ObjList currentList, void *blockPtr, unsigned short block_siz
 		newNode->next = currentList->first;
 		currentList->first = newNode;
 		currentList->size++;
-		currentList->currentObjNode = currentList->first;
+		currentList->blocksFilled += block_size;
+		//currentList->currentObjNode = currentList->first;
 	}
 
 	return currentList;
@@ -70,9 +72,10 @@ ObjList newObjNode(ObjList currentList, void *blockPtr, unsigned short block_siz
 
 
 //free list of pointers to blocks in object index
-ObjList freePointers(ObjList currentObjList)
+/*ObjList freePointers(ObjList currentList)
 {
-	objNode *current = currentObjList->first;
+
+	objNode *current = currentList->first;
 	objNode *temp = NULL;
 
 
@@ -81,16 +84,42 @@ ObjList freePointers(ObjList currentObjList)
 	{
 		temp = current;
 		current = current->next;
+		//printf("### %p ###  %i\n", temp->beginBlock, temp->blockSize);
 
-		free(temp->beginBlock);
-		free(temp->endBlock);
-		free(temp);
+		//these don't work for some reason
+		//free(temp->beginBlock);
+		//free(temp->endBlock);
+		//free(temp);
 	}
 
-	free(currentObjList->first); //might need to remove this
+	free(currentList->first); //might need to remove this
 
-	return currentObjList;
+	return currentList;
+}*/
+
+
+
+
+ObjList freePointers(ObjList currentList)
+{
+	objNode *current;
+
+	current = currentList->first;
+
+	for(int i = 0; i < currentList->size; i++)
+	{
+		//free(current->beginBlock);
+		//free(current);
+		current = current->next;
+	}
+
+	return currentList;
 }
+
+
+
+
+
 
 
 void printPointers(ObjList list)
@@ -107,3 +136,100 @@ void printPointers(ObjList list)
 }
 
 
+
+int findPtr(ObjList list, void *block_ptr)
+{
+	int found;
+	int count;
+	int size;
+	objNode *current;
+
+	found = 0;
+	count = 0;
+	size = 0;
+	current = list->first;
+
+	while(count < list->size && found == 0 && current != NULL)
+	{
+		if(block_ptr == current->beginBlock)
+		{
+			found = 1;
+		}
+		else
+		{
+			count++;
+			current = current->next;
+		}
+	}
+
+
+	if(found)
+	{
+
+		size = current->blockSize;
+	}
+
+
+	return size;
+}
+
+
+
+ObjList freeBlock(ObjList list, void *block_ptr)
+{
+	int result;
+	int count;
+	objNode *previous;
+	objNode *current;
+	objNode *toRemove;
+
+
+	result = 0;
+	count = 0;
+	previous = NULL;
+	current = list->first;
+
+
+
+	 while(count < list->size && result == 0)
+	 {
+
+	 	if(current->beginBlock == block_ptr)
+	 	{
+	 		//printf("************* %i %p\n", list->size, current->beginBlock);
+	 		result = 1;
+	 	}
+	 	else
+	 	{
+	 		previous = current;
+	 		current = current->next;
+	 		count++;
+	 	}
+	
+	 }
+
+
+
+	 if(result == 1)
+	 {
+
+
+	 	if(previous == NULL)
+	 	{	
+	 		toRemove = current;
+	 		list->first = current->next;
+	 	}
+	 	else
+	 	{
+	 		toRemove = current;
+	 		previous->next = current->next;
+	 	}
+
+	 	list->size--;
+	 	list->blocksFilled -= toRemove->blockSize;
+	 }
+
+
+
+	return list;
+}

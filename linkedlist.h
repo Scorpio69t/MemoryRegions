@@ -39,6 +39,7 @@ LinkedList removeNode(LinkedList list, const char *region_name);
 void printRegions(LinkedList list);
 LinkedList allocateBlock(LinkedList list, unsigned short block_size);
 char *findFreeBlocks(node currentNode, unsigned short block_size);
+LinkedList rfreeHelper(LinkedList list, void *block_ptr);
 
 #endif
 

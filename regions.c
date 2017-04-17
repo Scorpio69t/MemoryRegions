@@ -106,6 +106,7 @@ Boolean rinit(const char *region_name, r_size_t region_size)
 	}
 
 	printf("number of regions: %i, result: %i\n", nodeCount, result);
+
 	return result;
 }
 
@@ -182,13 +183,15 @@ void rdestroy(const char *region_name)
 		if(myList->chosenRegion == NULL)
 		{
 			pickedRegion = 0;
+			
 		}
 	}
-	else if(nodeCount == 0) //this hasn't been tested yet. try by removing everyone node with redestroy in test.c ---------------------------------------------------------------------------------------------
+	else //if(nodeCount == 0) //this hasn't been tested yet. try by removing everyone node with redestroy in test.c ---------------------------------------------------------------------------------------------
 	{
 		if(myList != NULL)
 		{
 			free(myList);
+
 		}
 		pickedRegion = 0;
 	}
@@ -199,7 +202,16 @@ void rdestroy(const char *region_name)
 
 void rdump()
 {
-	printRegions(myList);
+	
+	if(nodeCount > 0)
+	{
+		//printf("%s REGION NAME \n", myList->first->name);
+		printRegions(myList);
+	}
+	else
+	{
+		printf("No regions exist.\n");
+	}
 }
 
 
@@ -228,3 +240,32 @@ void *ralloc(r_size_t block_size)
 
 	return blockPtr;
 }
+
+
+
+
+
+Boolean rfree(void *block_ptr)
+{
+	Boolean result;
+	int beforeUsed;
+
+	beforeUsed = myList->chosenRegion->usedBlocks;
+	myList = rfreeHelper(myList, block_ptr);
+
+	myList->chosenRegion->usedBlocks = myList->chosenRegion->myObjList->blocksFilled;
+	//printf("############ %i\n", myList->chosenRegion->myObjList->blocksFilled);
+	//if less used blocks after calling rfreeHelper
+
+	if(beforeUsed > myList->chosenRegion->usedBlocks)
+	{
+		result = true;
+	}
+	else
+	{
+		result = false;
+	}
+
+	return result;
+}
+
