@@ -4,11 +4,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+
 #include "linkedlist.h"
 #include "objectindex.h"
 //#include <malloc/malloc.h>
-
-
 
 
 
@@ -30,20 +29,19 @@ LinkedList newList()
     newList = NULL;
   }
 
+  assert(newList != NULL);
   return newList;
 }
 
 
-//get number of nodes in list
-int getSize(LinkedList list)
-{
-  return list->size;
-}
 
 
 //add a new node to beginning of list
-LinkedList addNode(LinkedList list, const char *region_name, short region_size)
+LinkedList addNode(LinkedList list, const char *region_name, unsigned short region_size)
 {
+  assert(list != NULL);
+  assert(region_size > 0);
+
   node *newNode;
 
   newNode = malloc(sizeof(node));
@@ -86,6 +84,10 @@ LinkedList addNode(LinkedList list, const char *region_name, short region_size)
     list = removeNode(list, region_name);
   }
 
+
+  assert(list != NULL);
+  assert(region_size > 0);
+
   return list;
 }
 
@@ -94,6 +96,9 @@ LinkedList addNode(LinkedList list, const char *region_name, short region_size)
 //check if a node with name matching region_name exists then return 1 if found and 0 if not found
 int findNode(LinkedList list, const char *region_name)
 {
+  assert(list != NULL);
+  assert(strlen(region_name) > 0);
+
   int result;
   int count;
   node *currentNode;
@@ -118,6 +123,9 @@ int findNode(LinkedList list, const char *region_name)
 
   }
 
+  assert(list != NULL);
+  assert(strlen(region_name) > 0);
+  assert((result == 1) || (result == 0));
   return result;
 }
 
@@ -127,6 +135,8 @@ int findNode(LinkedList list, const char *region_name)
 //check if a node with name matching region_name exists then return list
 LinkedList findRegion(LinkedList list, const char *region_name)
 {
+  assert(strlen(region_name) > 0);
+
   int result;
   int count;
   node *currentNode;
@@ -156,6 +166,7 @@ LinkedList findRegion(LinkedList list, const char *region_name)
     list->chosenRegion = NULL;
   }
 
+  assert(strlen(region_name) > 0);
   return list;
 }
 
@@ -165,6 +176,9 @@ LinkedList findRegion(LinkedList list, const char *region_name)
 //remove a region from list if it exists
 LinkedList removeNode(LinkedList list, const char *region_name)
 {
+  assert(list != NULL);
+  assert(strlen(region_name) > 0);
+
   int result;
   int count;
   node *previousNode;
@@ -217,7 +231,6 @@ LinkedList removeNode(LinkedList list, const char *region_name)
       currentNode = currentNode->next;
       //printf("#########5\n");
     }
-
   }
 
 
@@ -228,6 +241,9 @@ LinkedList removeNode(LinkedList list, const char *region_name)
   }
   //printf("#########7\n");
 
+
+  assert(list != NULL);
+  assert(strlen(region_name) > 0);
   return list;
 }
 
@@ -238,6 +254,8 @@ LinkedList removeNode(LinkedList list, const char *region_name)
 // print of block addresses, amount of memory used by that block, and percentage of free memory left in that region
 void printRegions(LinkedList list)
 {
+  assert(list != NULL);
+
   double percentFree;
   int intPercent;
   node *currentNode;
@@ -257,7 +275,7 @@ void printRegions(LinkedList list)
       printf("Free blocks: %i%%\n", intPercent);  //need to add blocks allocated and block sizes.  %p for block pointers
       currentNode = currentNode->next;
     }
-    printf("End of lists.\n\n");
+    printf("End of regions list.\n\n");
   }
   else
   {
@@ -270,6 +288,7 @@ void printRegions(LinkedList list)
     printf("%c", (*ptr1));
   }*/
 
+  assert(list != NULL);
 }
 
 
@@ -278,6 +297,9 @@ void printRegions(LinkedList list)
 
 LinkedList allocateBlock(LinkedList list, unsigned short block_size)
 {
+  assert(list->chosenRegion != NULL);
+  assert(block_size > 0);
+
   void *blockPtr = NULL; // remove null
   char *ptr1;
 
@@ -312,6 +334,8 @@ LinkedList allocateBlock(LinkedList list, unsigned short block_size)
 
   //printf("\n");
 
+  assert(list->chosenRegion != NULL);
+  assert(block_size > 0);
   return list;
 }
 
@@ -320,6 +344,8 @@ LinkedList allocateBlock(LinkedList list, unsigned short block_size)
 
 char *findFreeBlocks(node currentNode, unsigned short block_size)
 {
+  assert(block_size > 0);
+
   char *startPtr; 
   char *currentPtr;
   int emptyCount;
@@ -365,6 +391,7 @@ char *findFreeBlocks(node currentNode, unsigned short block_size)
     startPtr = NULL;
   }
 
+  assert(block_size > 0);
   return startPtr;
 }
 
@@ -373,6 +400,9 @@ char *findFreeBlocks(node currentNode, unsigned short block_size)
 
 LinkedList rfreeHelper(LinkedList list, void *block_ptr)
 {
+  assert(list != NULL);
+  assert(block_ptr != NULL);
+
   char *ptr1;
   char *ptr2;
   int size;
@@ -399,7 +429,8 @@ LinkedList rfreeHelper(LinkedList list, void *block_ptr)
   }*/
 
 
-
+  assert(list != NULL);
+  assert(block_ptr != NULL);
   return list;
 }
 
@@ -407,10 +438,16 @@ LinkedList rfreeHelper(LinkedList list, void *block_ptr)
 
 unsigned short getPtrSize(LinkedList list, void *block_ptr)
 {
+  assert(list != NULL);
+  assert(block_ptr != NULL);
+
   unsigned short size;
 
   size = findPtr(list->chosenRegion->myObjList, block_ptr);
+  assert(size > 0);
 
+  assert(list != NULL);
+  assert(block_ptr != NULL);
   return size;
 }
 

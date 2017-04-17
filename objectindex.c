@@ -2,15 +2,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+//#include <string.h>
 #include <assert.h>
+
 #include "objectindex.h"
 #include "linkedlist.h"
-
-
-
-
-
 
 
 
@@ -78,14 +74,17 @@ ObjList newObjNode(ObjList currentList, void *blockPtr, unsigned short block_siz
 ObjList freePointers(ObjList currentList)
 {
 	objNode *current;
+	objNode *prev;
 
+	prev = NULL;
 	current = currentList->first;
 
-	for(int i = 0; i < currentList->size; i++)
+
+	while(current != NULL)
 	{
-		//free(current->beginBlock);
-		//free(current);
+		prev = current;
 		current = current->next;
+		free(prev);
 	}
 
 	return currentList;
@@ -107,7 +106,6 @@ void printPointers(ObjList list)
 		printf("Block: %p, Size: %i\n", currentNode->beginBlock, currentNode->blockSize);
 		currentNode = currentNode->next;
 	}
-
 }
 
 
@@ -140,7 +138,6 @@ int findPtr(ObjList list, void *block_ptr)
 
 	if(found)
 	{
-
 		size = current->blockSize;
 	}
 
@@ -168,7 +165,6 @@ ObjList freeBlock(ObjList list, void *block_ptr)
 
 	 while(count < list->size && result == 0)
 	 {
-
 	 	if(current->beginBlock == block_ptr)
 	 	{
 	 		//printf("************* %i %p\n", list->size, current->beginBlock);
@@ -187,8 +183,6 @@ ObjList freeBlock(ObjList list, void *block_ptr)
 
 	 if(result == 1)
 	 {
-
-
 	 	if(previous == NULL)
 	 	{	
 	 		toRemove = current;

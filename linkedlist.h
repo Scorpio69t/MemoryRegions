@@ -23,8 +23,8 @@ struct Node
 
 struct linkedList
 {
-	int size;
-	int allocResult;
+	int size;  //number of regions in list
+	int allocResult; //result of whether rinit() was successful
 	node *first;
 	node *chosenRegion;
 };
@@ -33,7 +33,7 @@ struct linkedList
 
 LinkedList newList();
 int getSize(LinkedList list);
-LinkedList addNode(LinkedList list, const char *region_name, short region_size);
+LinkedList addNode(LinkedList list, const char *region_name, unsigned short region_size);
 int findNode(LinkedList list, const char *region_name);
 LinkedList findRegion(LinkedList list, const char *region_name);
 LinkedList removeNode(LinkedList list, const char *region_name);
