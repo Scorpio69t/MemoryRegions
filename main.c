@@ -32,6 +32,7 @@ int main()
   assert(NULL == fail);
   rc = rfree(ca1);
   assert(rc);
+  rdump();
   fail = ralloc(384); // not enough contiguous memory
   assert(NULL == fail);
   rc = rfree(ia);

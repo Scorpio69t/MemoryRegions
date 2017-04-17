@@ -24,6 +24,7 @@ struct Node
 struct linkedList
 {
 	int size;
+	int allocResult;
 	node *first;
 	node *chosenRegion;
 };
@@ -40,6 +41,8 @@ void printRegions(LinkedList list);
 LinkedList allocateBlock(LinkedList list, unsigned short block_size);
 char *findFreeBlocks(node currentNode, unsigned short block_size);
 LinkedList rfreeHelper(LinkedList list, void *block_ptr);
+unsigned short getPtrSize(LinkedList list, void *block_ptr);
+
 
 #endif
 

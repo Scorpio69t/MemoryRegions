@@ -227,7 +227,7 @@ LinkedList removeNode(LinkedList list, const char *region_name)
     //printf("#########6\n");
   }
   //printf("#########7\n");
-  
+
   return list;
 }
 
@@ -264,11 +264,11 @@ void printRegions(LinkedList list)
     printf("Empty list.\n\n");
   }
 
-  /*char *ptr1;
+  char *ptr1;
   for(ptr1 = list->chosenRegion->region; ptr1 < list->chosenRegion->region + list->chosenRegion->blockTotalSize; ptr1++)
   {
     printf("%c", (*ptr1));
-  }*/
+  }
 
 }
 
@@ -289,13 +289,18 @@ LinkedList allocateBlock(LinkedList list, unsigned short block_size)
   {
     list->chosenRegion->newBlock = blockPtr;
     list->chosenRegion->myObjList = newObjNode(list->chosenRegion->myObjList, blockPtr, block_size);
-
+    list->allocResult = 1;
     for(ptr1 = list->chosenRegion->newBlock; ptr1 < list->chosenRegion->newBlock + block_size; ptr1++)
     {
       (*ptr1) = '0';
     }
 
     //list->chosenRegion->usedBlocks += block_size;
+  }
+  else
+  {
+    blockPtr = NULL;
+    list->allocResult = 0;
   }
 
 
@@ -305,7 +310,7 @@ LinkedList allocateBlock(LinkedList list, unsigned short block_size)
     printf("%c", (*ptr1));
   }*/
 
-  printf("\n");
+  //printf("\n");
 
   return list;
 }
@@ -437,3 +442,15 @@ LinkedList rfreeHelper(LinkedList list, void *block_ptr)
 
   return list;
 }
+
+
+
+unsigned short getPtrSize(LinkedList list, void *block_ptr)
+{
+  unsigned short size;
+
+  size = findPtr(list->chosenRegion->myObjList, block_ptr);
+
+  return size;
+}
+

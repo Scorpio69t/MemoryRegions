@@ -1,9 +1,9 @@
 CC = clang
 CFLAGS = -g -Wall
 
-PROG = test
+PROG = main
 
-OBJS = test.o regions.o linkedlist.o objectindex.o
+OBJS = main.o regions.o linkedlist.o objectindex.o
 
 $(PROG): $(OBJS) $(OBJDIR)
 	$(CC) $(CFLAGS) $(OBJS) -o $(PROG)

@@ -195,6 +195,12 @@ void rdestroy(const char *region_name)
 		}
 		pickedRegion = 0;
 	}
+
+
+	if(nodeCount == 0 && myList != NULL)
+	{
+		free(myList);
+	}
 }
 
 
@@ -223,14 +229,21 @@ void *ralloc(r_size_t block_size)
 	int freeBlocks;
 
 	freeBlocks = myList->chosenRegion->blockTotalSize - myList->chosenRegion->usedBlocks;
-
+	printf("\nBLOCKS FREE %i, ALLOCATING %i\n", freeBlocks, block_size);
 	//check that region to allocate is larger than 0 and less than the amount of free memory remaining
-	if(block_size > 0 && block_size <= freeBlocks)
+	if(block_size > 0 && block_size < freeBlocks)
 	{
 		//this can still return NULL if not enough contiguous empty blocks are found
 		myList = allocateBlock(myList, block_size);  //might need to return list and add struct variable for new blockPtr
-		blockPtr = myList->chosenRegion->newBlock;
-		myList->chosenRegion->usedBlocks += block_size;
+		if(myList->allocResult == 1)
+		{
+			blockPtr = myList->chosenRegion->newBlock;
+			myList->chosenRegion->usedBlocks += block_size;
+		}
+		else
+		{
+			blockPtr = NULL;
+		}
 	}
 	else
 	{
@@ -267,5 +280,18 @@ Boolean rfree(void *block_ptr)
 	}
 
 	return result;
+}
+
+
+
+
+
+r_size_t rsize(void *block_ptr)
+{
+	r_size_t size;
+
+	size = getPtrSize(myList, block_ptr);
+
+	return size;
 }
 
