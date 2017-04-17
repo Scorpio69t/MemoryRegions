@@ -33,6 +33,7 @@ LinkedList newList()
   assert(newList != NULL);
   assert(newList->size == 0);
   assert(newList->allocResult == 0);
+
   return newList;
 }
 
@@ -75,6 +76,7 @@ LinkedList addNode(LinkedList list, const char *region_name, unsigned short regi
 
     list->first = newNode;
     list->size++;
+
     verifyLList(list);
     verifyNodeOnly(*list->first);
   }
@@ -114,6 +116,7 @@ int findNode(LinkedList list, const char *region_name)
   count = 0;
   currentNode = list->first;
 
+  verifyLList(list);
 
   while(count < list->size && result == 0) //might need to be <= list->size
   {
@@ -121,6 +124,7 @@ int findNode(LinkedList list, const char *region_name)
     {
       result = 1;
       list->chosenRegion = currentNode;
+
       verifyNodeOnly(*list->chosenRegion);
     }
     else
@@ -128,12 +132,13 @@ int findNode(LinkedList list, const char *region_name)
       count++;
       currentNode = currentNode->next;
     }
-    verifyLList(list);
+    
   }
 
   assert(list != NULL);
   assert(strlen(region_name) > 0);
   assert((result == 1) || (result == 0));
+
   return result;
 }
 
@@ -160,6 +165,7 @@ LinkedList findRegion(LinkedList list, const char *region_name)
     {
       result = 1;
       list->chosenRegion = currentNode;
+
       verifyNodeOnly(*list->chosenRegion);
     }
     else
@@ -167,8 +173,9 @@ LinkedList findRegion(LinkedList list, const char *region_name)
       count++;
       currentNode = currentNode->next;
     }
-    verifyLList(list);
   }
+
+  verifyLList(list);
 
   if(result == 0)
   {
@@ -200,6 +207,8 @@ LinkedList removeNode(LinkedList list, const char *region_name)
   currentNode = list->first;
 
   verifyLList(list);
+  verifyNodeOnly(*currentNode);
+
   while(count < list->size && result == 0) //might need to be <= list->size
   {
     if(strcmp(region_name, currentNode->name) == 0)
@@ -257,6 +266,7 @@ LinkedList removeNode(LinkedList list, const char *region_name)
 
   assert(list != NULL);
   assert(strlen(region_name) > 0);
+
   return list;
 }
 
@@ -291,6 +301,7 @@ void printRegions(LinkedList list)
       currentNode = currentNode->next;
     }
     printf("End of regions list.\n\n");
+
     verifyLList(list);
   }
   else
@@ -328,10 +339,12 @@ LinkedList allocateBlock(LinkedList list, unsigned short block_size)
     list->chosenRegion->newBlock = blockPtr;
     list->chosenRegion->myObjList = newObjNode(list->chosenRegion->myObjList, blockPtr, block_size);
     list->allocResult = 1;
+
     for(ptr1 = list->chosenRegion->newBlock; ptr1 < list->chosenRegion->newBlock + block_size; ptr1++)
     {
       (*ptr1) = '0';
     }
+
     verifyLList(list);
     verifyNodeOnly(*list->chosenRegion);
     //list->chosenRegion->usedBlocks += block_size;
@@ -340,6 +353,7 @@ LinkedList allocateBlock(LinkedList list, unsigned short block_size)
   {
     blockPtr = NULL;
     list->allocResult = 0;
+
     verifyLList(list);
   }
 
@@ -354,6 +368,7 @@ LinkedList allocateBlock(LinkedList list, unsigned short block_size)
 
   assert(list->chosenRegion != NULL);
   assert(block_size > 0);
+
   return list;
 }
 
@@ -442,6 +457,7 @@ LinkedList rfreeHelper(LinkedList list, void *block_ptr)
 
 
   list->chosenRegion->myObjList = freeBlock(list->chosenRegion->myObjList, block_ptr);
+
   verifyNodeOnly(*list->chosenRegion);
   verifyLList(list);
 //printf("********************\n");
@@ -467,6 +483,7 @@ unsigned short getPtrSize(LinkedList list, void *block_ptr)
   unsigned short size;
 
   size = findPtr(list->chosenRegion->myObjList, block_ptr);
+
   assert(size > 0);
   verifyNodeOnly(*list->chosenRegion);
   verifyLList(list);

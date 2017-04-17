@@ -8,8 +8,11 @@
 
 
 r_size_t roundSize(r_size_t);
+void verifyRegion();
+
+
 static int nodeCount = 0;
-int pickedRegion;
+static int pickedRegion;
 LinkedList myList;
 
 
@@ -22,7 +25,7 @@ r_size_t roundSize(r_size_t region_size)
 	r_size_t remainder;
 
 	remainder = region_size % 8;
-	
+
 	if(remainder > 0)
 	{
 		remainder = 8 - remainder;
@@ -100,6 +103,10 @@ Boolean rinit(const char *region_name, r_size_t region_size)
 				//printf("ADDED NODE %s, list size: %d\n", region_name, getSize(myList));	
 				nodeCount = myList->size;
 				rchoose(region_name);
+
+				verifyRegion();
+				verifyLList(myList);
+				verifyNodeOnly(*myList->chosenRegion);
 				//printf("ADDED NODE %s, size: %d\n", rchosen(), getSize(myList));	
 			}
 		}
@@ -117,6 +124,7 @@ Boolean rinit(const char *region_name, r_size_t region_size)
 	assert(strlen(region_name) > 0);
 	assert(region_size > 0);
 	assert((result == true) || (result == false));
+
 	return result;
 }
 
@@ -142,6 +150,7 @@ const char *rchosen()
 		{
 			strncpy(currentName, myList->chosenRegion->name, strlen(myList->chosenRegion->name));
 
+			verifyRegion();
 			verifyNodeOnly(*myList->chosenRegion);
 			verifyLList(myList);
 		}
@@ -153,6 +162,7 @@ const char *rchosen()
 	}
 
 	assert(myList != NULL);
+
 	return currentName;
 }
 
@@ -168,7 +178,9 @@ Boolean rchoose(const char *region_name)
 	Boolean result; // remove = true later
 
 	myList = findRegion(myList, region_name);
+
 	verifyLList(myList);
+	verifyRegion();
 	//printf("%s CHOEENESNN REGION\n", myList->chosenRegion->name);
 	if(myList->chosenRegion == NULL)
 	{
@@ -184,6 +196,7 @@ Boolean rchoose(const char *region_name)
 
 	assert(strlen(region_name) > 0);
 	assert((result == true) || (result == false));
+
 	return result;
 }
 
@@ -200,6 +213,7 @@ void rdestroy(const char *region_name)
 
 	if(nodeCount > 0)
 	{	
+		verifyRegion();
 		verifyLList(myList);
 		verifyNodeOnly(*myList->chosenRegion);
 
@@ -210,7 +224,6 @@ void rdestroy(const char *region_name)
 		if(myList->chosenRegion == NULL)
 		{
 			pickedRegion = 0;
-			
 		}
 	}
 	else //if(nodeCount == 0) //this hasn't been tested yet. try by removing everyone node with redestroy in test.c ---------------------------------------------------------------------------------------------
@@ -241,6 +254,7 @@ void rdump()
 	if(nodeCount > 0 && myList != NULL)
 	{
 		//printf("%s REGION NAME \n", myList->first->name);
+		verifyRegion();
 		verifyLList(myList);
 		verifyNodeOnly(*myList->chosenRegion);
 
@@ -276,8 +290,10 @@ void *ralloc(r_size_t block_size)
 			myList = allocateBlock(myList, block_size);  //might need to return list and add struct variable for new blockPtr
 			if(myList->allocResult == 1)
 			{
+				verifyRegion();
 				verifyLList(myList);
 				verifyNodeOnly(*myList->chosenRegion);
+
 				blockPtr = myList->chosenRegion->newBlock;
 				myList->chosenRegion->usedBlocks += block_size;
 			}
@@ -314,6 +330,7 @@ Boolean rfree(void *block_ptr)
 
 	if(myList->chosenRegion != NULL)
 	{
+		verifyRegion();
 		verifyLList(myList);
 		verifyNodeOnly(*myList->chosenRegion);
 
@@ -339,6 +356,7 @@ Boolean rfree(void *block_ptr)
 
 	assert(block_ptr != NULL);
 	assert((result == true) || (result == false));
+
 	return result;
 }
 
@@ -354,10 +372,21 @@ r_size_t rsize(void *block_ptr)
 
 	size = getPtrSize(myList, block_ptr);
 
+	verifyRegion();
 	verifyLList(myList);
 	verifyNodeOnly(*myList->chosenRegion);
 
 	assert(block_ptr != NULL);
+
 	return size;
 }
 
+
+// invariants for regions
+void verifyRegion()
+{
+	assert(myList != NULL);
+	assert(nodeCount >= 0);
+	assert(pickedRegion >= 0);
+	assert(pickedRegion <= 1);
+}

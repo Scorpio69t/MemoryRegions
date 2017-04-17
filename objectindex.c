@@ -2,8 +2,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-//#include <string.h>
 #include <assert.h>
+//#include <string.h>
 
 #include "objectindex.h"
 #include "linkedlist.h"
@@ -29,6 +29,7 @@ ObjList newObjList()
 	}
 
 	assert(newObjList != NULL);
+
 	return newObjList;
 }
 
@@ -58,6 +59,7 @@ ObjList newObjNode(ObjList currentList, void *blockPtr, unsigned short block_siz
 		currentList->first = newNode;
 		currentList->size++;
 		currentList->blocksFilled += block_size;
+
 		verifyObjIndex(currentList);
 		//currentList->currentObjNode = currentList->first;
 	}
@@ -66,6 +68,7 @@ ObjList newObjNode(ObjList currentList, void *blockPtr, unsigned short block_siz
 	assert(currentList != NULL);
 	assert(blockPtr != NULL);
 	assert(block_size > 0);
+
 	return currentList;
 }
 
@@ -88,12 +91,14 @@ ObjList freePointers(ObjList currentList)
 	while(current != NULL)
 	{
 		verifyObjIndex(currentList);
+
 		prev = current;
 		current = current->next;
 		free(prev);
 	}
 
 	assert(currentList != NULL);
+
 	return currentList;
 }
 
@@ -161,6 +166,7 @@ int findPtr(ObjList list, void *block_ptr)
 
 	assert(list != NULL);
 	assert(block_ptr != NULL);
+
 	return size;
 }
 
@@ -223,6 +229,7 @@ ObjList freeBlock(ObjList list, void *block_ptr)
 
 	assert(list != NULL);
 	assert(block_ptr != NULL);
+
 	return list;
 }
 
