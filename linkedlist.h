@@ -32,7 +32,6 @@ struct linkedList
 
 
 LinkedList newList();
-int getSize(LinkedList list);
 LinkedList addNode(LinkedList list, const char *region_name, unsigned short region_size);
 int findNode(LinkedList list, const char *region_name);
 LinkedList findRegion(LinkedList list, const char *region_name);
@@ -42,7 +41,8 @@ LinkedList allocateBlock(LinkedList list, unsigned short block_size);
 char *findFreeBlocks(node currentNode, unsigned short block_size);
 LinkedList rfreeHelper(LinkedList list, void *block_ptr);
 unsigned short getPtrSize(LinkedList list, void *block_ptr);
-
+void verifyLList(LinkedList list);
+void verifyNodeOnly(node currentNode);
 
 #endif
 

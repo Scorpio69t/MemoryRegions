@@ -27,12 +27,11 @@ struct ObjectList
 
 
 ObjList newObjList();
-int getNumBlocks(ObjList list);
 ObjList newObjNode(ObjList currentList, void *blockPtr, unsigned short block_size);
 ObjList freePointers(ObjList currentList);
 void printPointers(ObjList list);
 ObjList freeBlock(ObjList list, void *block_ptr);
 int findPtr(ObjList list, void *block_ptr);
-
+void verifyObjIndex(ObjList list);
 
 #endif

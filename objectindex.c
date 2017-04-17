@@ -28,23 +28,21 @@ ObjList newObjList()
 		newObjList = NULL;
 	}
 
-
+	assert(newObjList != NULL);
 	return newObjList;
 }
 
 
-
-//number of points to blocks
-int getNumBlocks(ObjList currentList)
-{
-	return currentList->size;
-}
 
 
 
 //add new node to object index
 ObjList newObjNode(ObjList currentList, void *blockPtr, unsigned short block_size)
 {
+	assert(currentList != NULL);
+	assert(blockPtr != NULL);
+	assert(block_size > 0);
+
 	objNode *newNode;
 
 	newNode = malloc(sizeof(objNode));
@@ -60,9 +58,14 @@ ObjList newObjNode(ObjList currentList, void *blockPtr, unsigned short block_siz
 		currentList->first = newNode;
 		currentList->size++;
 		currentList->blocksFilled += block_size;
+		verifyObjIndex(currentList);
 		//currentList->currentObjNode = currentList->first;
 	}
 
+
+	assert(currentList != NULL);
+	assert(blockPtr != NULL);
+	assert(block_size > 0);
 	return currentList;
 }
 
@@ -73,6 +76,8 @@ ObjList newObjNode(ObjList currentList, void *blockPtr, unsigned short block_siz
 
 ObjList freePointers(ObjList currentList)
 {
+	assert(currentList != NULL);
+
 	objNode *current;
 	objNode *prev;
 
@@ -82,11 +87,13 @@ ObjList freePointers(ObjList currentList)
 
 	while(current != NULL)
 	{
+		verifyObjIndex(currentList);
 		prev = current;
 		current = current->next;
 		free(prev);
 	}
 
+	assert(currentList != NULL);
 	return currentList;
 }
 
@@ -98,20 +105,29 @@ ObjList freePointers(ObjList currentList)
 
 void printPointers(ObjList list)
 {
+	assert(list != NULL);
+
 	objNode *currentNode;
 	currentNode = list->first;
+
+	verifyObjIndex(list);
 
 	for(int i = 0; i < list->size; i++)
 	{
 		printf("Block: %p, Size: %i\n", currentNode->beginBlock, currentNode->blockSize);
 		currentNode = currentNode->next;
 	}
+
+	assert(list != NULL);
 }
 
 
 
 int findPtr(ObjList list, void *block_ptr)
 {
+	assert(list != NULL);
+	assert(block_ptr != NULL);
+
 	int found;
 	int count;
 	int size;
@@ -135,6 +151,7 @@ int findPtr(ObjList list, void *block_ptr)
 		}
 	}
 
+	verifyObjIndex(list);
 
 	if(found)
 	{
@@ -142,6 +159,8 @@ int findPtr(ObjList list, void *block_ptr)
 	}
 
 
+	assert(list != NULL);
+	assert(block_ptr != NULL);
 	return size;
 }
 
@@ -149,6 +168,9 @@ int findPtr(ObjList list, void *block_ptr)
 
 ObjList freeBlock(ObjList list, void *block_ptr)
 {
+	assert(list != NULL);
+	assert(block_ptr != NULL);
+
 	int result;
 	int count;
 	objNode *previous;
@@ -179,7 +201,7 @@ ObjList freeBlock(ObjList list, void *block_ptr)
 	
 	 }
 
-
+	 verifyObjIndex(list);
 
 	 if(result == 1)
 	 {
@@ -199,6 +221,19 @@ ObjList freeBlock(ObjList list, void *block_ptr)
 	 }
 
 
-
+	assert(list != NULL);
+	assert(block_ptr != NULL);
 	return list;
 }
+
+
+
+//invariants
+void verifyObjIndex(ObjList list)
+{
+	assert(list != NULL);
+	assert(list->size > 0);
+	assert(list->blocksFilled >= 0);
+	assert(list->first->blockSize > 0);
+}
+
