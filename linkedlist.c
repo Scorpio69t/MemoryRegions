@@ -6,7 +6,7 @@
 #include <assert.h>
 
 #include "linkedlist.h"
-#include "objectindex.h"
+//#include "objectindex.h"
 //#include <malloc/malloc.h>
 
 
@@ -24,6 +24,7 @@ LinkedList newList()
     newList->first = NULL;
     newList->size = 0;
     newList->allocResult = 0;
+    newList->pickedRegion = 0;
   }
   else
   {
@@ -51,10 +52,10 @@ LinkedList addNode(LinkedList list, const char *region_name, unsigned short regi
 
   newNode = malloc(sizeof(node));
   assert(newNode != NULL);
-  newNode->name = malloc(sizeof(char) * strlen(region_name) + 1);
+  newNode->name = malloc(sizeof(char) * strlen(region_name) + 1); //+1
   assert(newNode->name != NULL);
   //newNode->region = (unsigned char *)malloc(sizeof(char) * region_size);
-  newNode->region = malloc(sizeof(char) * region_size);
+  newNode->region = malloc(sizeof(char) * region_size); 
   assert(newNode->region != NULL);
 
 
@@ -63,9 +64,10 @@ LinkedList addNode(LinkedList list, const char *region_name, unsigned short regi
     newNode->blockTotalSize = region_size;
     newNode->usedBlocks = 0;
     strncpy(newNode->name, region_name, strlen(region_name));
+    newNode->name[strlen(region_name)] = '\0';
     newNode->next = list->first;
     newNode->myObjList = newObjList();  //creates object index for pointers to blocks
-
+    newNode->myObjList->size = 0;
     //fill region with non zero
     for(int i = 0; i < newNode->blockTotalSize; i++)
     {
@@ -75,10 +77,16 @@ LinkedList addNode(LinkedList list, const char *region_name, unsigned short regi
     //printf("\n");
 
     list->first = newNode;
+
+    //replace rchoose() in regions.c
+    /*list->chosenRegion = list->first;
+    list->pickedRegion = 1;*/
+
     list->size++;
 
+
     verifyLList(list);
-    verifyNodeOnly(*list->first);
+
   }
   else
   {
@@ -114,6 +122,8 @@ int findNode(LinkedList list, const char *region_name)
 
   result = 0;
   count = 0;
+  list->pickedRegion = 0;
+  list->foundNewRegion = 0;
   currentNode = list->first;
 
   verifyLList(list);
@@ -124,7 +134,8 @@ int findNode(LinkedList list, const char *region_name)
     {
       result = 1;
       list->chosenRegion = currentNode;
-
+      list->pickedRegion = 1;
+      list->foundNewRegion = 1;
       verifyNodeOnly(*list->chosenRegion);
     }
     else
@@ -156,17 +167,20 @@ LinkedList findRegion(LinkedList list, const char *region_name)
 
   result = 0;
   count = 0;
+  list->foundNewRegion = 0;
   currentNode = list->first;
 
 
   while(count < list->size && result == 0) //might need to be <= list->size
   {
+    //printf("REGION: %s, LIST SIZE: %i\n", currentNode->name, list->size);
     if(strcmp(region_name, currentNode->name) == 0)
     {
       result = 1;
       list->chosenRegion = currentNode;
-
-      verifyNodeOnly(*list->chosenRegion);
+      list->pickedRegion = 1;
+      list->foundNewRegion = 1;
+      //verifyNodeOnly(*list->chosenRegion);
     }
     else
     {
@@ -179,7 +193,7 @@ LinkedList findRegion(LinkedList list, const char *region_name)
 
   if(result == 0)
   {
-    list->chosenRegion = NULL;
+    list->foundNewRegion = 0;
   }
 
   assert(strlen(region_name) > 0);
@@ -207,7 +221,7 @@ LinkedList removeNode(LinkedList list, const char *region_name)
   currentNode = list->first;
 
   verifyLList(list);
-  verifyNodeOnly(*currentNode);
+
 
   while(count < list->size && result == 0) //might need to be <= list->size
   {
@@ -215,9 +229,17 @@ LinkedList removeNode(LinkedList list, const char *region_name)
     {
 
       // unchoose region to be destroyed if it is currently chosen
-      if(strcmp(list->chosenRegion->name, currentNode->name) == 0)
+      if(list->pickedRegion == 1)
       {
-        list->chosenRegion = NULL;
+        if(strcmp(list->chosenRegion->name, currentNode->name) == 0)
+        {
+          list->chosenRegion = NULL;
+          list->pickedRegion = 0;
+        }
+        else
+        {
+          list->pickedRegion = 1;
+        }
       }
 
 
@@ -233,10 +255,11 @@ LinkedList removeNode(LinkedList list, const char *region_name)
       {
         toRemove = currentNode;
         previousNode->next = currentNode->next;
+
         //printf("#########3\n");
       }
       //printf("Destroying region: %s\n\n", region_name);
-      verifyNodeOnly(*toRemove);
+      //verifyNodeOnly(*toRemove);
 
       free(toRemove->region);
       free(toRemove->name);
@@ -287,7 +310,6 @@ void printRegions(LinkedList list)
   
   if(list->size > 0)
   {
-    verifyNodeOnly(*currentNode);
 
     for(int i = 0; i < list->size; i++)
     {
@@ -296,7 +318,10 @@ void printRegions(LinkedList list)
       intPercent = percentFree;
 
       printf("\nRegion name: %s\n", currentNode->name);
-      printPointers(currentNode->myObjList);
+      if(currentNode->myObjList->size > 0)
+      {
+        printPointers(currentNode->myObjList);
+      }
       printf("Free blocks: %i%%\n", intPercent);  //need to add blocks allocated and block sizes.  %p for block pointers
       currentNode = currentNode->next;
     }
@@ -346,7 +371,6 @@ LinkedList allocateBlock(LinkedList list, unsigned short block_size)
     }
 
     verifyLList(list);
-    verifyNodeOnly(*list->chosenRegion);
     //list->chosenRegion->usedBlocks += block_size;
   }
   else
@@ -455,11 +479,13 @@ LinkedList rfreeHelper(LinkedList list, void *block_ptr)
   }
 
 
+  if(list->pickedRegion == 1)
+  {
+    list->chosenRegion->myObjList = freeBlock(list->chosenRegion->myObjList, block_ptr);
+  }
 
-  list->chosenRegion->myObjList = freeBlock(list->chosenRegion->myObjList, block_ptr);
-
-  verifyNodeOnly(*list->chosenRegion);
   verifyLList(list);
+
 //printf("********************\n");
 
   /*for(ptr1 = list->chosenRegion->region; ptr1 < list->chosenRegion->region + list->chosenRegion->blockTotalSize; ptr1++)
@@ -484,8 +510,7 @@ unsigned short getPtrSize(LinkedList list, void *block_ptr)
 
   size = findPtr(list->chosenRegion->myObjList, block_ptr);
 
-  assert(size > 0);
-  verifyNodeOnly(*list->chosenRegion);
+  //assert(size > 0);
   verifyLList(list);
 
   assert(list != NULL);
@@ -503,6 +528,11 @@ void verifyLList(LinkedList list)
   assert(list->size > 0);
   assert(list->allocResult >= 0);
   assert(list->allocResult <= 1);
+
+  if(list->pickedRegion == 1)
+  {
+    verifyNodeOnly(*list->chosenRegion);
+  }
 }
 
 

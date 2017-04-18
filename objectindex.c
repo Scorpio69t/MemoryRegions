@@ -3,10 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-//#include <string.h>
 
 #include "objectindex.h"
-#include "linkedlist.h"
+//#include "linkedlist.h"
 
 
 
@@ -156,7 +155,7 @@ int findPtr(ObjList list, void *block_ptr)
 		}
 	}
 
-	verifyObjIndex(list);
+	//verifyObjIndex(list);
 
 	if(found)
 	{
@@ -207,7 +206,7 @@ ObjList freeBlock(ObjList list, void *block_ptr)
 	
 	 }
 
-	 verifyObjIndex(list);
+	 //verifyObjIndex(list);
 
 	 if(result == 1)
 	 {
@@ -239,8 +238,8 @@ ObjList freeBlock(ObjList list, void *block_ptr)
 void verifyObjIndex(ObjList list)
 {
 	assert(list != NULL);
-	assert(list->size > 0);
+	assert(list->size >= 0);
 	assert(list->blocksFilled >= 0);
-	assert(list->first->blockSize > 0);
+	assert(list->first->blockSize >= 0);
 }
 

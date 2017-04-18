@@ -1,65 +1,154 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <assert.h>
 
 #include "regions.h"
 
-// this code should run to completion with the output shown
-// you must think of additional cases of correct use and misuse for your testing
+#ifdef NDEBUG
+#define require(predicate) { if (!(predicate)) {fprintf(stderr, "FAIL: %s\n", #predicate); exit(0);} }
+#else
+#define require(predicate) assert(predicate)
+#endif
+
+#define COUNT 8
+const int SIZE = 64;
+void *ptrs[4][COUNT];
+
+void setup(int pos, int size, char start)
+{
+  int i, j;
+  char *str;
+
+  for (i = 0; i < COUNT; i++) 
+  {
+    require(NULL != (ptrs[pos][i] = ralloc(size / COUNT)));
+    if(i == 0 && pos == 0)
+    {
+      printf("%p #####\n", ptrs[0][0]);
+      printf("%s #####\n", ptrs[0][0]);
+    }
+
+    str = ptrs[pos][i];
+    for (j = 0; j < size / COUNT - 1; j++) 
+    {
+      str[j] = start + j;
+    }
+    str[j] = '\0';
+  }
+}
+
+void check(int pos, int size, char start) 
+{
+  int i;
+  char str[SIZE];
+
+  for (i = 0; i < size / COUNT - 1; i++) 
+  {
+    str[i] = start + i;
+  }
+  str[i] = '\0';
+
+  for (i = 0; i < COUNT; i++) 
+  {
+    require(size / COUNT == rsize(ptrs[pos][i]));
+    require(strcmp(ptrs[pos][i], str) == 0);
+  }
+}
+
 int main()
 {
-  Boolean rc;
-  int *ia;
-  char *ca1, *ca2, *ca3, *ca4;
-  char *fail;
-  
-  rc = rinit("hello", 1024);
-  assert(rc);
-  rc = rinit("world", 798); // 800
-  assert(rc);
+  int i;
 
-  printf("Chosen: %s\n", rchosen()); // world
+  require(rinit("first", SIZE));
+  require(rinit("second", SIZE * 2));
+  require(rinit("third", SIZE * 3));
+  require(rinit("fourth", SIZE * 4));
   
-  rc = rchoose("hello");
-  assert(rc);
-  ia = ralloc(sizeof(int) * 32);
-  printf("Size: %d\n", rsize(ia)); // 128
-  ca1 = ralloc(256);
-  assert(NULL != ca1);
-  ca2 = ralloc(384);
-  assert(NULL != ca2);
-  fail = ralloc(384); // not enough memory
-  assert(NULL == fail);
-  rc = rfree(ca1);
-  assert(rc);
-  fail = ralloc(384); // not enough contiguous memory
-  assert(NULL == fail);
-  rc = rfree(ia);
-  assert(rc);
-  ca3 = ralloc(384); // now there's enough memory
-  assert (NULL != ca3);
+  require(rchoose("fourth"));
+  setup(3, SIZE * 4, 'a');
+  require(rchoose("first"));
+  setup(0, SIZE, '0');
+  require(rchoose("third"));
+  setup(2, SIZE * 3, ' ');
+  require(rchoose("second"));
+  setup(1, SIZE * 2, 'A');
   
-  rc = rchoose("world");
-  assert(rc);
-  ca4 = ralloc(796);
-  assert(NULL != ca4);
-  printf("Size: %d\n", rsize(ca4)); // 800
-  
-  rdump(); // hello & world
-  
-  rdestroy("hello");
-  
-  rc = rfree(ca4 + 24); // not the start of the block
-  assert(!rc);
-  rc = rfree(ca4); // better!
-  assert(rc);
-  
-  rdestroy("world");
+  rdump();
 
-  rdump(); // nothing
+  require(0 == rsize(ptrs[0][0]));
+  require(0 == rsize(ptrs[2][0]));
+  require(0 == rsize(ptrs[3][0]));
+
+  require(rchoose("first"));
+
+
+  printf("###########1\n");
+  check(0, SIZE, '0');
+  printf("###########2\n");
+
+  require(rchoose("second"));
+  check(1, SIZE * 2, 'A');
+  require(rchoose("third"));
+  check(2, SIZE * 3, ' ');
+  require(rchoose("fourth"));
+  check(3, SIZE * 4, 'a');
+
+  rdestroy("third");
+
+  require(0 == rsize(ptrs[2][0]));
+  require(0 == rsize(ptrs[2][COUNT - 1]));
+  require(!rfree(ptrs[2][0]));
+  require(!rfree(ptrs[2][COUNT - 1]));
+
+  require(rchoose("first"));
+  check(0, SIZE, '0');
+  require(rchoose("second"));
+  check(1, SIZE * 2, 'A');
+  require(rchoose("fourth"));
+  check(3, SIZE * 4, 'a');
+
+  require(rchoose("second"));
+  
+  for (i = COUNT - 1; i >= 0; i--) 
+  {
+    require(rfree(ptrs[1][i]));
+  }
+
+  require(rchoose("fourth"));
+  require(0 == rsize(ptrs[1][0]));
+  require(0 == rsize(ptrs[1][COUNT - 1]));
+  require(!rfree(ptrs[1][0]));
+  require(!rfree(ptrs[1][COUNT - 1]));
+  require(rchoose("second"));
+  require(0 == rsize(ptrs[1][0]));
+  require(0 == rsize(ptrs[1][COUNT - 1]));
+  require(!rfree(ptrs[1][0]));
+  require(!rfree(ptrs[1][COUNT - 1]));
+
+  require(rchoose("first"));
+  check(0, SIZE, '0');
+  require(rchoose("fourth"));
+  check(3, SIZE * 4, 'a');
+
+  require(!rchoose("third"));
+  rdestroy("fourth");
+  require(rchoose("first"));
+  check(0, SIZE, '0');
+
+  for (i = 0; i < COUNT; i++) 
+  {
+    require(rfree(ptrs[0][i]));
+  }
+
+  require(0 == rsize(ptrs[0][0]));
+  require(0 == rsize(ptrs[0][COUNT - 1]));
+  require(!rfree(ptrs[0][0]));
+  require(!rfree(ptrs[0][COUNT - 1]));
+
+  rdump();
 
   fprintf(stderr,"\nEnd of processing.\n");
 
   return EXIT_SUCCESS;
 }
-

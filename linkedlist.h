@@ -25,6 +25,8 @@ struct linkedList
 {
 	int size;  //number of regions in list
 	int allocResult; //result of whether rinit() was successful
+	int pickedRegion;
+	int foundNewRegion;
 	node *first;
 	node *chosenRegion;
 };
