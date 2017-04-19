@@ -155,7 +155,7 @@ int findPtr(ObjList list, void *block_ptr)
 		}
 	}
 
-	//verifyObjIndex(list);
+	verifyObjIndex(list); //---------------------------------------------------------------------------------------------------
 
 	if(found)
 	{
@@ -206,7 +206,7 @@ ObjList freeBlock(ObjList list, void *block_ptr)
 	
 	 }
 
-	 //verifyObjIndex(list);
+	 verifyObjIndex(list);
 
 	 if(result == 1)
 	 {

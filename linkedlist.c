@@ -225,7 +225,7 @@ LinkedList removeNode(LinkedList list, const char *region_name)
   previousNode = NULL;
   currentNode = list->first;
 
-  verifyLList(list);
+  verifyLList(list);  
 
 
    while(count < list->size && result == 0) //might need to be <= list->size
@@ -286,7 +286,7 @@ LinkedList removeNode(LinkedList list, const char *region_name)
       //printf("#########5\n");
     }
   }
-
+  verifyLList(list);  //--------------------------------------------------------------------------------------------------------------------------
 
   if(result)
   {
@@ -533,30 +533,5 @@ unsigned short getPtrSize(LinkedList list, void *block_ptr)
 
 
 
-//invariants for linkedlist
-void verifyLList(LinkedList list)
-{
-  assert(list != NULL);
-  assert(list->first != NULL);
-  assert(list->size > 0);
-  assert(list->allocResult >= 0);
-  assert(list->allocResult <= 1);
 
-  if(list->pickedRegion == 1)
-  {
-    verifyNodeOnly(*list->chosenRegion);
-  }
-}
-
-
-//invariants for nodes currently selected
-void verifyNodeOnly(node currentNode)
-{
-  assert(currentNode.region != NULL);
-  assert(currentNode.name != NULL);
-  assert(strlen(currentNode.name) > 0);
-  assert(currentNode.blockTotalSize > 0);
-  assert(currentNode.usedBlocks >= 0);
-  assert(currentNode.usedBlocks <= currentNode.blockTotalSize);
-}
 

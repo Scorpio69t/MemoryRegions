@@ -1,64 +1,63 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <assert.h>
 
 #include "regions.h"
 
-#ifdef NDEBUG
-#define require(predicate) { if (!(predicate)) {fprintf(stderr, "FAIL: %s\n", #predicate); exit(0);} }
-#else
-#define require(predicate) assert(predicate)
-#endif
-
+// this code should run to completion with the output shown
+// you must think of additional cases of correct use and misuse for your testing
 int main()
 {
-  const int NUM_REGIONS = 1000;
-  const int BLOCK_SIZE = 64;
-  char names[NUM_REGIONS][10];
-  void *first_ptrs[NUM_REGIONS];
-  int i, j;
+  Boolean rc;
+  int *ia;
+  char *ca1, *ca2, *ca3, *ca4;
+  char *fail;
+  
+  rc = rinit("hello", 1024);
+  assert(rc);
+  rc = rinit("world", 798); // 800
+  assert(rc);
 
-  require(NULL == ralloc(1));
-  rdestroy(NULL);
-  rdestroy("goodbye");
-  require(0 == rfree(NULL));
-  require(0 == rfree(names));
+  printf("Chosen: %s\n", rchosen()); // world
   
-  for (i = 0; i < NUM_REGIONS; i++) 
-  {
-    sprintf(names[i], "r%d", i);
-    require(rinit(names[i], BLOCK_SIZE * (i + 1)));
-    require(strcmp(rchosen(), names[i]) == 0);
-  }
+  rc = rchoose("hello");
+  assert(rc);
+  ia = ralloc(sizeof(int) * 32);
+  printf("Size: %d\n", rsize(ia)); // 128
+  ca1 = ralloc(256);
+  assert(NULL != ca1);
+  ca2 = ralloc(384);
+  assert(NULL != ca2);
+  fail = ralloc(384); // not enough memory
+  assert(NULL == fail);
+  rc = rfree(ca1);
+  assert(rc);
+  fail = ralloc(384); // not enough contiguous memory
+  assert(NULL == fail);
+  rc = rfree(ia);
+  assert(rc);
+  ca3 = ralloc(384); // now there's enough memory
+  assert (NULL != ca3);
   
-  for (i = NUM_REGIONS - 1; i >= 0; i--) 
-  {
-    require(rchoose(names[i]));
-    require(NULL != (first_ptrs[i] = ralloc(BLOCK_SIZE)));
-    for (j = 0; j < i; j++) {
-      require(NULL != ralloc(BLOCK_SIZE));
-    }
-    require(NULL == ralloc(1));
-  }
+  rc = rchoose("world");
+  assert(rc);
+  ca4 = ralloc(796);
+  assert(NULL != ca4);
+  printf("Size: %d\n", rsize(ca4)); // 800
+  
+  rdump(); // hello & world
+  
+  rdestroy("hello");
+  
+  rc = rfree(ca4 + 24); // not the start of the block
+  assert(!rc);
+  rc = rfree(ca4); // better!
+  assert(rc);
+  
+  rdestroy("world");
 
-  for (i = 0; i < NUM_REGIONS; i++) 
-  {
-    require(rchoose(names[i]));
-    for (j = 0; j < i + 1; j++) 
-    {
-      require(BLOCK_SIZE == rsize(first_ptrs[i] + j * BLOCK_SIZE));
-    }
-    require(strcmp(rchosen(), names[i]) == 0);
-  }
-  
-  for (i = 0; i < NUM_REGIONS; i++) 
-  {
-    rdestroy(names[i]);
-  }
-  
-  rdump();
-  
+  rdump(); // nothing
+
   fprintf(stderr,"\nEnd of processing.\n");
 
   return EXIT_SUCCESS;

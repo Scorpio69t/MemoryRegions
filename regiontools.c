@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 
 #include "regions.h"
 #include "regiontools.h"
@@ -38,5 +39,34 @@ void verifyRegion(LinkedList myList, int pickedRegion, int nodeCount)
 	assert(nodeCount >= 0);
 	assert(pickedRegion >= 0);
 	assert(pickedRegion <= 1);
+}
+
+
+
+//invariants for linkedlist
+void verifyLList(LinkedList list)
+{
+  assert(list != NULL);
+  //assert(list->first != NULL);
+  assert(list->size > 0);
+  assert(list->allocResult >= 0);
+  assert(list->allocResult <= 1);
+
+  if(list->pickedRegion == 1)
+  {
+    verifyNodeOnly(*list->chosenRegion);
+  }
+}
+
+
+//invariants for nodes currently selected
+void verifyNodeOnly(node currentNode)
+{
+  assert(currentNode.region != NULL);
+  assert(currentNode.name != NULL);
+  assert(strlen(currentNode.name) > 0);
+  assert(currentNode.blockTotalSize > 0);
+  assert(currentNode.usedBlocks >= 0);
+  assert(currentNode.usedBlocks <= currentNode.blockTotalSize);
 }
 
