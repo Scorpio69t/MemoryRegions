@@ -10,7 +10,7 @@ typedef struct ObjectList *ObjList;
 struct ObjectNode
 {
 	char *beginBlock; 
-	//char *endBlock;
+	char *endBlock;
 	unsigned short blockSize;
 	objNode *next;
 };

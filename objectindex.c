@@ -240,6 +240,6 @@ void verifyObjIndex(ObjList list)
 	assert(list != NULL);
 	assert(list->size >= 0);
 	assert(list->blocksFilled >= 0);
-	assert(list->first->blockSize >= 0);
+	//assert(list->first->blockSize >= 0);
 }
 

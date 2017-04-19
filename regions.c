@@ -233,10 +233,11 @@ void rdestroy(const char *region_name)
 		verifyLList(myList);
 
 		myList = removeNode(myList, region_name);
-
+//printf("############## %i\n", nodeCount);
 		//if(strcmp(region_name, "r5001") == 0){printf("^^^^^^^^^^^^^^^^\n");}
 
 		nodeCount = myList->size;
+		//printf("nodecount: %i, regionname: %s\n", nodeCount, region_name);
 		//printf("SIZE: %i\n", myList->size);
 
 		/*if(myList->chosenRegion == NULL)
@@ -298,23 +299,32 @@ void *ralloc(r_size_t block_size)
 	void *blockPtr;
 	int freeBlocks;
 
-	if(myList->pickedRegion == 1 && block_size > 0)
+	if(myList != NULL)
 	{
-		block_size = roundSize(block_size);
-		freeBlocks = myList->chosenRegion->blockTotalSize - myList->chosenRegion->usedBlocks;
-		//printf("\nBLOCKS FREE %i, ALLOCATING %i\n", freeBlocks, block_size);
-		//check that region to allocate is larger than 0 and less than the amount of free memory remaining
-		if(block_size > 0 && block_size <= freeBlocks)
+		if(myList->pickedRegion == 1 && block_size > 0 && nodeCount > 0)
 		{
-			//this can still return NULL if not enough contiguous empty blocks are found
-			myList = allocateBlock(myList, block_size);  //might need to return list and add struct variable for new blockPtr
-			if(myList->allocResult == 1)
-			{
-				verifyRegion(myList, myList->pickedRegion, nodeCount);
-				verifyLList(myList);
+			block_size = roundSize(block_size);
+			freeBlocks = myList->chosenRegion->blockTotalSize - myList->chosenRegion->usedBlocks;
+			//printf("\nBLOCKS FREE %i, ALLOCATING %i\n", freeBlocks, block_size);
+			//check that region to allocate is larger than 0 and less than the amount of free memory remaining
 
-				blockPtr = myList->chosenRegion->newBlock;
-				myList->chosenRegion->usedBlocks += block_size;
+			if(block_size > 0 && block_size <= freeBlocks)
+			{
+
+				//this can still return NULL if not enough contiguous empty blocks are found
+				myList = allocateBlock(myList, block_size);  //might need to return list and add struct variable for new blockPtr
+				if(myList->allocResult == 1)
+				{
+					verifyRegion(myList, myList->pickedRegion, nodeCount);
+					verifyLList(myList);
+
+					blockPtr = myList->chosenRegion->newBlock;
+					myList->chosenRegion->usedBlocks += block_size;
+				}
+				else
+				{
+					blockPtr = NULL;
+				}
 			}
 			else
 			{
@@ -348,22 +358,29 @@ Boolean rfree(void *block_ptr)
 	Boolean result;
 	int beforeUsed;
 
-	if(myList->pickedRegion == 1 && block_ptr != NULL)
+	if(nodeCount > 0)
 	{
-		//verifyRegion(myList, myList->pickedRegion, nodeCount);
-		//verifyLList(myList);
-
-		beforeUsed = myList->chosenRegion->usedBlocks;
-		myList = rfreeHelper(myList, block_ptr);
-		myList->chosenRegion->usedBlocks = myList->chosenRegion->myObjList->blocksFilled;
-		//printf("############ %i\n", myList->chosenRegion->myObjList->blocksFilled);
-		//if less used blocks after calling rfreeHelper
-		
-		//maybe move assertions here
-
-		if(beforeUsed > myList->chosenRegion->usedBlocks)
+		if(myList->pickedRegion == 1 && block_ptr != NULL)
 		{
-			result = true;
+			//verifyRegion(myList, myList->pickedRegion, nodeCount);
+			//verifyLList(myList);
+
+			beforeUsed = myList->chosenRegion->usedBlocks;
+			myList = rfreeHelper(myList, block_ptr);
+			myList->chosenRegion->usedBlocks = myList->chosenRegion->myObjList->blocksFilled;
+			//printf("############ %i\n", myList->chosenRegion->myObjList->blocksFilled);
+			//if less used blocks after calling rfreeHelper
+			
+			//maybe move assertions here
+
+			if(beforeUsed > myList->chosenRegion->usedBlocks)
+			{
+				result = true;
+			}
+			else
+			{
+				result = false;
+			}
 		}
 		else
 		{

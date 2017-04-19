@@ -11,6 +11,7 @@ typedef struct linkedList *LinkedList;
 struct Node
 {
 	char *region;  //might need to be void?
+	char *endRegion;
 	char *name;
 	char *newBlock;
   	int blockTotalSize;

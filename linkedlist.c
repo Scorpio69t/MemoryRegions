@@ -55,12 +55,13 @@ LinkedList addNode(LinkedList list, const char *region_name, unsigned short regi
   newNode->name = malloc(sizeof(char) * strlen(region_name) + 1); //+1
   assert(newNode->name != NULL);
   //newNode->region = (unsigned char *)malloc(sizeof(char) * region_size);
-  newNode->region = malloc(sizeof(char) * region_size); 
+  newNode->region = malloc(sizeof(char) * region_size);  //maybe remove +1  --------------------------------------------
   assert(newNode->region != NULL);
 
 
   if(newNode != NULL && newNode->name != NULL && newNode->region != NULL)
   {
+    newNode->endRegion = newNode->region + region_size - 1;
     newNode->blockTotalSize = region_size;
     newNode->usedBlocks = 0;
     strncpy(newNode->name, region_name, strlen(region_name));
@@ -71,10 +72,14 @@ LinkedList addNode(LinkedList list, const char *region_name, unsigned short regi
     //fill region with non zero
     for(int i = 0; i < newNode->blockTotalSize; i++)
     {
-      newNode->region[i] = '1';
+      newNode->region[i] = 'X';
       //printf("%c ", newNode->region[i]);
     }
-    //printf("\n");
+
+    //newNode->region[region_size - 1] = 'R';
+   // printf("LAST ENTRY: %c\n", *newNode->endRegion);
+
+    //newNode->region[region_size] = '\0';  //maybe remove ---------------------------------------------------------------------------
 
     list->first = newNode;
 
@@ -223,7 +228,8 @@ LinkedList removeNode(LinkedList list, const char *region_name)
   verifyLList(list);
 
 
-  while(count < list->size && result == 0) //might need to be <= list->size
+   while(count < list->size && result == 0) //might need to be <= list->size
+  //while(currentNode != NULL && result == 0)
   {
     if(strcmp(region_name, currentNode->name) == 0)
     {
@@ -245,7 +251,7 @@ LinkedList removeNode(LinkedList list, const char *region_name)
 
       result = 1;
       //printf("#########1\n");
-      if(previousNode == NULL)
+      if(previousNode == NULL) //first node
       {
         toRemove = currentNode;
         list->first = currentNode->next;  
@@ -263,7 +269,10 @@ LinkedList removeNode(LinkedList list, const char *region_name)
 
       free(toRemove->region);
       free(toRemove->name);
+      //if(toRemove->myObjList->size > 0)
+      //{
       toRemove->myObjList = freePointers(toRemove->myObjList);  //free every node in object index linked list
+      //}
       free(toRemove->myObjList);
       free(toRemove);
      
@@ -303,7 +312,7 @@ void printRegions(LinkedList list)
   assert(list != NULL);
 
   double percentFree;
-  int intPercent;
+  //int intPercent;
   node *currentNode;
 
   currentNode = list->first;
@@ -315,17 +324,17 @@ void printRegions(LinkedList list)
     {
       percentFree = currentNode->blockTotalSize - currentNode->usedBlocks; 
       percentFree = (percentFree / currentNode->blockTotalSize) * 100;
-      intPercent = percentFree;
+      //intPercent = percentFree;
 
       printf("\nRegion name: %s\n", currentNode->name);
       if(currentNode->myObjList->size > 0)
       {
         printPointers(currentNode->myObjList);
       }
-      printf("Free blocks: %i%%\n", intPercent);  //need to add blocks allocated and block sizes.  %p for block pointers
+      printf("Free blocks: %.2f%%\n", percentFree);  //need to add blocks allocated and block sizes.  %p for block pointers
       currentNode = currentNode->next;
     }
-    printf("End of regions list.\n\n");
+    printf("\nEnd of regions list.\n\n");
 
     verifyLList(list);
   }
@@ -334,11 +343,12 @@ void printRegions(LinkedList list)
     printf("Empty list.\n\n");
   }
 
-  /*char *ptr1;
-  for(ptr1 = list->chosenRegion->region; ptr1 < list->chosenRegion->region + list->chosenRegion->blockTotalSize; ptr1++)
+ /* char *ptr1;
+  for(ptr1 = list->chosenRegion->region; ptr1 <= list->chosenRegion->endRegion; ptr1++)
   {
     printf("%c", (*ptr1));
-  }*/
+  }
+  printf("\n");*/
 
   assert(list != NULL);
 }
@@ -420,7 +430,7 @@ char *findFreeBlocks(node currentNode, unsigned short block_size)
 
   while(traverseCount < currentNode.blockTotalSize && found == 0)
   {
-    if(*currentPtr != '0') //might need to initialise all spaces in region to something other than '0' either in linkedlist.c or regions.c
+    if(*currentPtr == 'X') //might need to initialise all spaces in region to something other than '0' either in linkedlist.c or regions.c
     {
       emptyCount++;
     }
@@ -438,6 +448,9 @@ char *findFreeBlocks(node currentNode, unsigned short block_size)
     currentPtr = currentPtr + 1;
     traverseCount++;
   }
+
+
+
 
   // verifyLList() is not called since this function is only passed a node, not a linked list
   verifyNodeOnly(currentNode);
@@ -473,7 +486,7 @@ LinkedList rfreeHelper(LinkedList list, void *block_ptr)
     ptr2 = block_ptr + size;
     for(ptr1 = block_ptr; ptr1 < ptr2; ptr1++)
     {
-      (*ptr1) = '1';
+      (*ptr1) = 'X';
     }
     verifyLList(list);
   }
