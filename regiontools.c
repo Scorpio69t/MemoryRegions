@@ -1,4 +1,19 @@
 
+//-----------------------------------------
+// NAME: Justin Mui
+// STUDENT NUMBER: 7624249
+// COURSE: COMP 2160, SECTION: A01
+// INSTRUCTOR: Franklin Bristow
+// ASSIGNMENT: assignment 4, QUESTION: 1
+// 
+// REMARKS: This program file is used for handling the invariants
+//          for linkedlist.c and regions.c.  It also gets called
+//          by regions.c whenever a variable of type r_size_t
+//          needs to be rounded up.
+//
+//-----------------------------------------
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>

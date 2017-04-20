@@ -1,4 +1,18 @@
-//linked list for holding pointers to blocks in a region
+
+//-----------------------------------------
+// NAME: Justin Mui
+// STUDENT NUMBER: 7624249
+// COURSE: COMP 2160, SECTION: A01
+// INSTRUCTOR: Franklin Bristow
+// ASSIGNMENT: assignment 4, QUESTION: 1
+// 
+// REMARKS: A linked list which holds the pointers to each block of
+//          memory that is allocated to a region.  This linked list 
+//          is stored in the nodes of the region's linked list.
+//          Part of this code taken from course textbook.
+//
+//-----------------------------------------
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -126,7 +140,7 @@ void printPointers(ObjList list)
 }
 
 
-
+//find a pointer and return its size
 int findPtr(ObjList list, void *block_ptr)
 {
 	assert(list != NULL);

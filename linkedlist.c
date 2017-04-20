@@ -1,4 +1,19 @@
-// linked list taken from textbook
+
+//-----------------------------------------
+// NAME: Justin Mui
+// STUDENT NUMBER: 7624249
+// COURSE: COMP 2160, SECTION: A01
+// INSTRUCTOR: Franklin Bristow
+// ASSIGNMENT: assignment 4, QUESTION: 1
+// 
+// REMARKS: A linked list which holds all the regions which
+//          are assigned memory in this program.  Most of these
+//          functions are called from regions.c to add, remove,
+//          and modify regions and blocks of memory.
+//          Part of this code taken from course textbook.
+//
+//-----------------------------------------
+
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,3 +1,20 @@
+
+//-----------------------------------------
+// NAME: Justin Mui
+// STUDENT NUMBER: 7624249
+// COURSE: COMP 2160, SECTION: A01
+// INSTRUCTOR: Franklin Bristow
+// ASSIGNMENT: assignment 4, QUESTION: 1
+// 
+// REMARKS: This is called by main.c to accept all the input
+//          for building the regions.  Most of these functions
+//          take and verify the input from main.c then call
+//          linked.c to create, modify, or destroy regions
+//          of memory.
+//
+//-----------------------------------------
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -11,8 +28,8 @@
 
 
 
-static int nodeCount = 0;
-static LinkedList myList;
+static int nodeCount = 0;  //number of regions in the program. should be 0 when no list or regions exist
+static LinkedList myList;  //linked list object
 
 
 //create and select that region if it doesn't already exist 
@@ -365,6 +382,7 @@ void *ralloc(r_size_t block_size)
 Boolean rfree(void *block_ptr)
 {
 	//assert(block_ptr != NULL);
+	assert(nodeCount >= 0); //------------------------------------
 
 	Boolean result;
 	int beforeUsed;
