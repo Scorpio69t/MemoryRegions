@@ -2,7 +2,7 @@
 #define _LINKEDLIST_H
 
 #include "objectindex.h"
-// Linked list node definition
+
 typedef struct Node node;
 typedef struct linkedList *LinkedList;
 
@@ -34,7 +34,7 @@ struct linkedList
 
 
 
-LinkedList newList();
+LinkedList createList();
 LinkedList addNode(LinkedList list, const char *region_name, unsigned short region_size);
 int findNode(LinkedList list, const char *region_name);
 LinkedList findRegion(LinkedList list, const char *region_name);

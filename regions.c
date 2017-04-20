@@ -25,20 +25,26 @@
 #include "linkedlist.h"
 
 
-
-
-
 static int nodeCount = 0;  //number of regions in the program. should be 0 when no list or regions exist
 static LinkedList myList;  //linked list object
 
 
-//create and select that region if it doesn't already exist 
+
+
+
+//------------------------------------------------------
+// rinit
+//
+// PURPOSE: create and select a new region if a region with that name doesn't already exist
+// INPUT PARAMETERS:
+//			region_name: name of region to create
+//          region_size: amount of memory to allocate in region
+// OUTPUT PARAMETERS:
+// 			result: boolean of whether the region was successfully created
+//------------------------------------------------------
 Boolean rinit(const char *region_name, r_size_t region_size)
 {
-	assert(nodeCount >= 0); //-------------------------------------------------------------------------------------
-	//printf("REGION NAME: %s\n", region_name);
-	//assert(strlen(region_name) > 0);
-	//assert(region_size > 0);
+	assert(nodeCount >= 0); 
 
 	Boolean result;
 
@@ -47,21 +53,19 @@ Boolean rinit(const char *region_name, r_size_t region_size)
 	if(region_name != NULL && region_size > 0)
 	{
 
+		//create new linked list if nodeCount is 0
 		if(nodeCount == 0)
 		{			
-			myList = newList();
+			myList = createList();
 
 			if(myList != NULL)
 			{
-				//printf("RINIT WORKS + %d\n", getSize(myList));
-				//myList = addNode(myList, "", 1);
 				result = true;
 			}
 			else
 			{
 				result = false;
 			}
-			//addNode("", 1); //first node added will be empty
 		}
 
 		if(region_size >= 1)
@@ -69,76 +73,70 @@ Boolean rinit(const char *region_name, r_size_t region_size)
 			// round if size isn't zero
 			region_size = roundSize(region_size); 
 		}
-		else //if region_size is 0
+		else 
 		{
 			result = false;
 		}
 
-		//check if name already exists in list
-		//result = chooseNode(region_name);
-		//result = !result;
 
-		//initialize memory region if size and name test pass
+		//initialize memory region if size >0 and name isn't NULL
 		if(result == true)
 		{
 			if(nodeCount == 0)
 			{
 				myList = addNode(myList, region_name, region_size);
-				//printf("ADDED NODE %s, list size: %d\n", region_name, getSize(myList));	
+
 				nodeCount = myList->size;
 				rchoose(region_name);
-				//printf("REGION NAME: %s, LIST NAME: %s\n", region_name, myList->chosenRegion->name);
-				//printf("ADDED NODE %s, size: %d\n", rchosen(), getSize(myList));	
 			}
 			else if(nodeCount > 0)
 			{	
 				if(findNode(myList, region_name)) //if name already exists
 				{
-					//printf("Region with name %s already exists\n", region_name);
 					result = false;
 				}
 				else
 				{
 					myList = addNode(myList, region_name, region_size);
-					//printf("ADDED NODE %s, list size: %d\n", region_name, getSize(myList));	
 					nodeCount = myList->size;
 					rchoose(region_name);
-					//printf("CHOSEN REGION: %s, LISTSIZE: %i\n", myList->chosenRegion->name, myList->size);
-					//printf("REGION NAME: %s, LIST NAME: %s\n", region_name, myList->chosenRegion->name);
 
 					verifyRegion(myList, myList->pickedRegion, nodeCount);
 					verifyLList(myList);
 
-					//printf("ADDED NODE %s, size: %d\n", rchosen(), getSize(myList));	
 				}
 			}
 			else
 			{
-				//printf("Cannot add region.\n");
 				result = false;
 			}
-			//result = addNode(region_name, region_size);
-			//rchoose(region_name);
+
 		}
 	}
 	else
 	{
 		result = false;
 	}
-	//printf("number of regions: %i, result: %i\n", nodeCount, result);
-//printf("%s ######### chosen name\n", myList->chosenRegion->name);
 
-	//assert(strlen(region_name) > 0);
-	//assert(region_size > 0);
+
 	assert((result == true) || (result == false));
-	assert(nodeCount >= 0); //-------------------------------------------------------------------------------------
+	assert(nodeCount >= 0); 
 	return result;
 }
 
 
 
 
-// return name of currently chosen node and null if a node isn't chosen
+
+
+
+//------------------------------------------------------
+// rchosen
+//
+// PURPOSE: return name of the region that was chosen
+// OUTPUT PARAMETERS:
+// 			currentName: name of chosen region, NULL if no region is currently chosen
+//------------------------------------------------------
 const char *rchosen()
 {
 	assert(nodeCount >= 0);
@@ -154,8 +152,8 @@ const char *rchosen()
 		else
 		{
 			currentName = malloc(sizeof(char) * strlen(myList->chosenRegion->name) + 1); // +1
-			//printf("RCHOSEN: %s structlength: %lu, currentNAme length: %lu", currentName, strlen(myList->chosenRegion->name), strlen(currentName));  
 			assert(currentName != NULL);
+
 			if(currentName != NULL)
 			{
 				strncpy(currentName, myList->chosenRegion->name, strlen(myList->chosenRegion->name));
@@ -166,7 +164,6 @@ const char *rchosen()
 			}
 			else
 			{
-				//printf("Malloc failed!\n");
 				currentName = NULL;
 			}
 		}
@@ -184,26 +181,34 @@ const char *rchosen()
 
 
 
-// choose a region matching the name from region_name
-// returns true if it exists and false if it doesn't
+
+
+//------------------------------------------------------
+// rchoose
+//
+// PURPOSE: choose a region if there is one that matches the name given by reigon_name
+// INPUT PARAMETERS:
+//			region_name: name of region to search for
+// OUTPUT PARAMETERS:
+// 			result: boolean of whether that region was found
+//------------------------------------------------------
 Boolean rchoose(const char *region_name)
 {
-	assert(nodeCount >= 0); //-------------------------------------------------------------------------------------
-	//assert(strlen(region_name) > 0);
+	assert(nodeCount >= 0);
 
-	Boolean result; // remove = true later
-//printf("%s #########\n", region_name);
+
+	Boolean result; 
+
 	if(region_name != NULL)
 	{
 		if(nodeCount > 0)
 		{
 			myList->foundNewRegion = 0;
-
 			myList = findRegion(myList, region_name);
 
 			verifyLList(myList);
 			verifyRegion(myList, myList->pickedRegion, nodeCount);
-			//printf("%s CHOEENESNN REGION\n", myList->chosenRegion->name);
+
 			if(myList->foundNewRegion == 0)
 			{
 				result = false;
@@ -223,8 +228,8 @@ Boolean rchoose(const char *region_name)
 		result = false;
 	}
 
-	//assert(strlen(region_name) > 0);
-	assert(nodeCount >= 0); //-------------------------------------------------------------------------------------
+
+	assert(nodeCount >= 0); 
 	assert((result == true) || (result == false));
 
 	return result;
@@ -236,20 +241,22 @@ Boolean rchoose(const char *region_name)
 
 
 
-//remove a region from list
+
+//------------------------------------------------------
+// rdestroy
+//
+// PURPOSE: remove a region from the linked list and free any memory allocated inside that region
+// INPUT PARAMETERS:
+//			region_name: name of region to remove
+//
+//------------------------------------------------------
 void rdestroy(const char *region_name)
 {
-	assert(nodeCount >= 0); //-------------------------------------------------------------------------------------
-	//assert(strlen(region_name) > 0);
-	/*if(strcmp(region_name, "r5001") == 0)
-	{
-		//rdump();
-		printf("***************** %i\n", myList->size);
+	assert(nodeCount >= 0); 
 
-	}*/
-	if(region_name != NULL)//--------------------------------------------------------------------------------------
+	if(region_name != NULL)
 	{
-		if(strlen(region_name) > 0)//------------------------------------------------------------------------------
+		if(strlen(region_name) > 0)
 		{
 			if(nodeCount > 0)
 			{
@@ -257,21 +264,10 @@ void rdestroy(const char *region_name)
 				verifyLList(myList);
 
 				myList = removeNode(myList, region_name);
-		//printf("############## %i\n", nodeCount);
-				//if(strcmp(region_name, "r5001") == 0){printf("^^^^^^^^^^^^^^^^\n");}
-
 				nodeCount = myList->size;
-				//printf("nodecount: %i, regionname: %s\n", nodeCount, region_name);
-				//printf("SIZE: %i\n", myList->size);
-
-				/*if(myList->chosenRegion == NULL)
-				{
-					myList->pickedRegion = 0;
-				}*/
-
 
 			}
-			else //if(nodeCount == 0) //this hasn't been tested yet. try by removing everyone node with redestroy in test.c ---------------------------------------------------------------------------------------------
+			else //if(nodeCount == 0) 
 			{
 				if(myList != NULL)
 				{
@@ -287,20 +283,28 @@ void rdestroy(const char *region_name)
 		free(myList);
 	}
 
-	assert(nodeCount >= 0); //-------------------------------------------------------------------------------------
-	//assert(strlen(region_name) > 0);
+	assert(nodeCount >= 0); 
 }
 
 
 
 
+
+
+
+//------------------------------------------------------
+// rdump
+//
+// PURPOSE: print out the name every region that exists, each block of
+//          memory allocated in that region, and the percentage of 
+//          free space remaining
+//------------------------------------------------------
 void rdump()
 {
 	assert(myList >= 0);
 
 	if(nodeCount > 0 )//&& myList != NULL)
 	{
-		//printf("%s REGION NAME \n", myList->first->name);
 		verifyRegion(myList, myList->pickedRegion, nodeCount);
 		verifyLList(myList);
 
@@ -316,30 +320,39 @@ void rdump()
 
 
 
-//allocate block of memory in chosen region if there are enough contiguous bytes
+
+
+
+
+
+//------------------------------------------------------
+// ralloc
+//
+// PURPOSE: allocate a block of memory in chosen region if there are enough contiguous bytes
+// INPUT PARAMETERS:
+//			block_size: amount of memory to allocate
+// OUTPUT PARAMETERS:
+// 			blockPtr: pointer to block of memory if it was allocated, NULL if it was not
+//------------------------------------------------------
 void *ralloc(r_size_t block_size)
 {
-	//assert(myList != NULL);
-	//assert(block_size > 0);
-	assert(nodeCount >= 0); //-------------------------------------------------------------------------------------
+
+	assert(nodeCount >= 0);
 
 	void *blockPtr;
 	int freeBlocks;
 
-	if(nodeCount > 0) // maybe move noceCount > 0 here instead of checking for NULL list ---------------------------------
+	if(nodeCount > 0) 
 	{
-		if(myList->pickedRegion == 1 && block_size > 0)  //removed nodecount check ----------------------------------- 
+		if(myList->pickedRegion == 1 && block_size > 0) 
 		{
 			block_size = roundSize(block_size);
 			freeBlocks = myList->chosenRegion->blockTotalSize - myList->chosenRegion->usedBlocks;
-			//printf("\nBLOCKS FREE %i, ALLOCATING %i\n", freeBlocks, block_size);
-			//check that region to allocate is larger than 0 and less than the amount of free memory remaining
 
 			if(block_size > 0 && block_size <= freeBlocks)
 			{
-
 				//this can still return NULL if not enough contiguous empty blocks are found
-				myList = allocateBlock(myList, block_size);  //might need to return list and add struct variable for new blockPtr
+				myList = allocateBlock(myList, block_size); 
 				if(myList->allocResult == 1)
 				{
 					verifyRegion(myList, myList->pickedRegion, nodeCount);
@@ -369,9 +382,8 @@ void *ralloc(r_size_t block_size)
 	}
 
 
-	//assert(block_size > 0);
-	//assert(myList != NULL);
-	assert(nodeCount >= 0); //-------------------------------------------------------------------------------------
+
+	assert(nodeCount >= 0);
 	return blockPtr;
 }
 
@@ -379,10 +391,21 @@ void *ralloc(r_size_t block_size)
 
 
 
+
+
+
+//------------------------------------------------------
+// rfree
+//
+// PURPOSE: frees a block of memory given by block_ptr if it exists in current region
+// INPUT PARAMETERS:
+//			block_ptr: pointer to a block of memory
+// OUTPUT PARAMETERS:
+// 			result: boolean of whether the memory was freed
+//------------------------------------------------------
 Boolean rfree(void *block_ptr)
 {
-	//assert(block_ptr != NULL);
-	assert(nodeCount >= 0); //------------------------------------
+	assert(nodeCount >= 0); 
 
 	Boolean result;
 	int beforeUsed;
@@ -391,16 +414,9 @@ Boolean rfree(void *block_ptr)
 	{
 		if(myList->pickedRegion == 1 && block_ptr != NULL)
 		{
-			//verifyRegion(myList, myList->pickedRegion, nodeCount);
-			//verifyLList(myList);
-
 			beforeUsed = myList->chosenRegion->usedBlocks;
 			myList = rfreeHelper(myList, block_ptr);
 			myList->chosenRegion->usedBlocks = myList->chosenRegion->myObjList->blocksFilled;
-			//printf("############ %i\n", myList->chosenRegion->myObjList->blocksFilled);
-			//if less used blocks after calling rfreeHelper
-			
-			//maybe move assertions here
 
 			if(beforeUsed > myList->chosenRegion->usedBlocks)
 			{
@@ -421,7 +437,8 @@ Boolean rfree(void *block_ptr)
 		result = false;
 	}
 
-	//assert(block_ptr != NULL);
+
+	assert(nodeCount >= 0);
 	assert((result == true) || (result == false));
 
 	return result;
@@ -431,9 +448,19 @@ Boolean rfree(void *block_ptr)
 
 
 
+
+//------------------------------------------------------
+// rsize
+//
+// PURPOSE: return size of a block of memory given by block_ptr if it exists in current region
+// INPUT PARAMETERS:
+//			block_ptr: the pointer to a block of memory
+// OUTPUT PARAMETERS:
+// 			size: size of that block of memory. 0 if there's an error.
+//------------------------------------------------------
 r_size_t rsize(void *block_ptr)
 {
-	//assert(block_ptr != NULL);
+	assert(nodeCount >= 0); 
 
 	r_size_t size;
 
@@ -443,13 +470,15 @@ r_size_t rsize(void *block_ptr)
 
 		verifyRegion(myList, myList->pickedRegion, nodeCount);
 		verifyLList(myList);
-
 	}
 	else
 	{
 		size = 0;
 	}
-	//assert(block_ptr != NULL);
+
+
+	assert(nodeCount >= 0); 
+	assert(size >= 0); 
 
 	return size;
 }

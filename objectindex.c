@@ -19,11 +19,20 @@
 #include <assert.h>
 
 #include "objectindex.h"
-//#include "linkedlist.h"
 
 
 
-ObjList newObjList()
+
+
+//------------------------------------------------------
+// createObjList
+//
+// PURPOSE: create a new linked list of pointers. 
+//          called by addNode() when a new region is created
+// OUTPUT PARAMETERS:
+//      newObjList: new linked list for pointers that was created
+//------------------------------------------------------
+ObjList createObjList()
 {
 	ObjList newObjList;
 
@@ -50,7 +59,18 @@ ObjList newObjList()
 
 
 
-//add new node to object index
+
+//------------------------------------------------------
+// newObjNode
+//
+// PURPOSE: add a new node with a pointer to a block of memory
+// INPUT PARAMETERS:
+//      currentList: linked list to add a node to
+//      blockPtr: pointer of to a block of allocated memory
+//      block_size: amount of memory allocated to that block
+// OUTPUT PARAMETERS:
+//      list: return list with pointer added to it
+//------------------------------------------------------
 ObjList newObjNode(ObjList currentList, void *blockPtr, unsigned short block_size)
 {
 	assert(currentList != NULL);
@@ -64,8 +84,6 @@ ObjList newObjNode(ObjList currentList, void *blockPtr, unsigned short block_siz
 
 	if(newNode != NULL)
 	{
-		//check whether there is space to allocate memory 
-		//put size of allocated memory into newNode->blockSize
 		newNode->beginBlock = blockPtr;
 		newNode->blockSize = block_size;
 		newNode->next = currentList->first;
@@ -74,7 +92,6 @@ ObjList newObjNode(ObjList currentList, void *blockPtr, unsigned short block_siz
 		currentList->blocksFilled += block_size;
 
 		verifyObjIndex(currentList);
-		//currentList->currentObjNode = currentList->first;
 	}
 
 
@@ -90,6 +107,15 @@ ObjList newObjNode(ObjList currentList, void *blockPtr, unsigned short block_siz
 
 
 
+//------------------------------------------------------
+// freePointers
+//
+// PURPOSE: free all nodes of pointers in this linked list
+// INPUT PARAMETERS:
+//      currentList: linked list to traverse and clear nodes
+// OUTPUT PARAMETERS:
+//      list: linked list with all nodes freed and removed
+//------------------------------------------------------
 ObjList freePointers(ObjList currentList)
 {
 	assert(currentList != NULL);
@@ -121,6 +147,13 @@ ObjList freePointers(ObjList currentList)
 
 
 
+//------------------------------------------------------
+// printPointers
+//
+// PURPOSE: called by printRegions() to print out block pointers and the amount of memory they use
+// INPUT PARAMETERS:
+//      list: linked list containing pointers to print
+//------------------------------------------------------
 void printPointers(ObjList list)
 {
 	assert(list != NULL);
@@ -140,7 +173,22 @@ void printPointers(ObjList list)
 }
 
 
-//find a pointer and return its size
+
+
+
+
+
+//------------------------------------------------------
+// findPtr
+//
+// PURPOSE: find the pointer block_ptr in the linked list and return its
+//          size if it exists, and 0 if it doesn't
+// INPUT PARAMETERS:
+//      list: linked list to search for pointer in
+//      block_ptr: pointer to block of memory
+// OUTPUT PARAMETERS:
+//      size: size of block of memory if it was found, otherwise return 0
+//------------------------------------------------------
 int findPtr(ObjList list, void *block_ptr)
 {
 	assert(list != NULL);
@@ -169,7 +217,7 @@ int findPtr(ObjList list, void *block_ptr)
 		}
 	}
 
-	verifyObjIndex(list); //---------------------------------------------------------------------------------------------------
+	verifyObjIndex(list); 
 
 	if(found)
 	{
@@ -185,6 +233,19 @@ int findPtr(ObjList list, void *block_ptr)
 
 
 
+
+
+
+//------------------------------------------------------
+// freeBlock
+//
+// PURPOSE: search for then free the memory used by block_ptr in the current region
+// INPUT PARAMETERS:
+//      list: linked list of pointers to search in
+//      block_ptr: pointer to block of memory to search for and clear
+// OUTPUT PARAMETERS:
+//      list: list of pointers that was passed to this function
+//------------------------------------------------------
 ObjList freeBlock(ObjList list, void *block_ptr)
 {
 	assert(list != NULL);
@@ -196,19 +257,16 @@ ObjList freeBlock(ObjList list, void *block_ptr)
 	objNode *current;
 	objNode *toRemove;
 
-
 	result = 0;
 	count = 0;
 	previous = NULL;
 	current = list->first;
 
 
-
-	 while(count < list->size && result == 0)
-	 {
+	while(count < list->size && result == 0)
+	{
 	 	if(current->beginBlock == block_ptr)
 	 	{
-	 		//printf("************* %i %p\n", list->size, current->beginBlock);
 	 		result = 1;
 	 	}
 	 	else
@@ -217,13 +275,12 @@ ObjList freeBlock(ObjList list, void *block_ptr)
 	 		current = current->next;
 	 		count++;
 	 	}
-	
-	 }
+	}
 
-	 verifyObjIndex(list);
+	verifyObjIndex(list);
 
-	 if(result == 1)
-	 {
+	if(result == 1)
+	{
 	 	if(previous == NULL)
 	 	{	
 	 		toRemove = current;
@@ -237,7 +294,7 @@ ObjList freeBlock(ObjList list, void *block_ptr)
 
 	 	list->size--;
 	 	list->blocksFilled -= toRemove->blockSize;
-	 }
+	}
 
 
 	assert(list != NULL);
@@ -248,12 +305,21 @@ ObjList freeBlock(ObjList list, void *block_ptr)
 
 
 
-//invariants
+
+
+
+
+//------------------------------------------------------
+// verifyObjIndex
+//
+// PURPOSE: invariants for checking the linked list of pointers in a region
+// INPUT PARAMETERS:
+//      list: linked list of pointers
+//------------------------------------------------------
 void verifyObjIndex(ObjList list)
 {
 	assert(list != NULL);
 	assert(list->size >= 0);
 	assert(list->blocksFilled >= 0);
-	//assert(list->first->blockSize >= 0);
 }
 

@@ -21,12 +21,11 @@ struct ObjectList
 	int size;
 	int blocksFilled;
 	objNode *first;
-	//objNode *currentObjNode;
 };
 
 
 
-ObjList newObjList();
+ObjList createObjList();
 ObjList newObjNode(ObjList currentList, void *blockPtr, unsigned short block_size);
 ObjList freePointers(ObjList currentList);
 void printPointers(ObjList list);

@@ -21,13 +21,20 @@
 #include <assert.h>
 
 #include "linkedlist.h"
-//#include "objectindex.h"
-//#include <malloc/malloc.h>
 
 
 
-//create a new list if list is empty
-LinkedList newList()
+
+
+
+//------------------------------------------------------
+// createList
+//
+// PURPOSE: create a new linked list of regions if no list already exists
+// OUTPUT PARAMETERS:
+//      newList: new linked list that was created
+//------------------------------------------------------
+LinkedList createList()
 {
   LinkedList newList;
 
@@ -56,7 +63,21 @@ LinkedList newList()
 
 
 
-//add a new node to beginning of list
+
+
+
+
+//------------------------------------------------------
+// addNode
+//
+// PURPOSE: add a new region to the linked list
+// INPUT PARAMETERS:
+//      list: linked list to add new region to
+//      region_name: name of region to be created
+//      region_size: amount of memory to allocate to this region
+// OUTPUT PARAMETERS:
+//      list: return list once new node is added to it
+//------------------------------------------------------
 LinkedList addNode(LinkedList list, const char *region_name, unsigned short region_size)
 {
   assert(list != NULL);
@@ -67,10 +88,10 @@ LinkedList addNode(LinkedList list, const char *region_name, unsigned short regi
 
   newNode = malloc(sizeof(node));
   assert(newNode != NULL);
-  newNode->name = malloc(sizeof(char) * strlen(region_name) + 1); //+1
+  newNode->name = malloc(sizeof(char) * strlen(region_name) + 1); 
   assert(newNode->name != NULL);
-  //newNode->region = (unsigned char *)malloc(sizeof(char) * region_size);
-  newNode->region = malloc(sizeof(char) * region_size);  //maybe remove +1  --------------------------------------------
+
+  newNode->region = malloc(sizeof(char) * region_size);  
   assert(newNode->region != NULL);
 
 
@@ -82,35 +103,24 @@ LinkedList addNode(LinkedList list, const char *region_name, unsigned short regi
     strncpy(newNode->name, region_name, strlen(region_name));
     newNode->name[strlen(region_name)] = '\0';
     newNode->next = list->first;
-    newNode->myObjList = newObjList();  //creates object index for pointers to blocks
+    newNode->myObjList = createObjList();  //creates object index for pointers to blocks
     newNode->myObjList->size = 0;
+
     //fill region with non zero
     for(int i = 0; i < newNode->blockTotalSize; i++)
     {
       newNode->region[i] = 'X';
-      //printf("%c ", newNode->region[i]);
     }
 
-    //newNode->region[region_size - 1] = 'R';
-   // printf("LAST ENTRY: %c\n", *newNode->endRegion);
-
-    //newNode->region[region_size] = '\0';  //maybe remove ---------------------------------------------------------------------------
 
     list->first = newNode;
-
-    //replace rchoose() in regions.c
-    /*list->chosenRegion = list->first;
-    list->pickedRegion = 1;*/
-
     list->size++;
-
 
     verifyLList(list);
 
   }
   else
   {
-    //printf("Malloc failed!\n");
     list = NULL;
   }
 
@@ -130,7 +140,22 @@ LinkedList addNode(LinkedList list, const char *region_name, unsigned short regi
 
 
 
-//check if a node with name matching region_name exists then return 1 if found and 0 if not found
+
+
+
+
+
+//------------------------------------------------------
+// findNode
+//
+// PURPOSE: check if a node with name mathing region_name exists. add the node
+//          to list->chosenRegion if it exists.
+// INPUT PARAMETERS:
+//      list: linked list to search in
+//      region_name: name of region to find
+// OUTPUT PARAMETERS:
+//      result: return 1 if the region exists, and 0 if it doesn't
+//------------------------------------------------------
 int findNode(LinkedList list, const char *region_name)
 {
   assert(list != NULL);
@@ -148,7 +173,7 @@ int findNode(LinkedList list, const char *region_name)
 
   verifyLList(list);
 
-  while(count < list->size && result == 0) //might need to be <= list->size
+  while(count < list->size && result == 0) 
   {
     if(strcmp(region_name, currentNode->name) == 0)
     {
@@ -176,7 +201,20 @@ int findNode(LinkedList list, const char *region_name)
 
 
 
-//check if a node with name matching region_name exists then return list
+
+
+
+
+//------------------------------------------------------
+// findRegion
+//
+// PURPOSE: similar to findNode except it returns the list instead of a boolean
+// INPUT PARAMETERS:
+//      list: linked list to search in
+//      region_name: name of region to find
+// OUTPUT PARAMETERS:
+//      list: return list with list->foundNewRegion for whether the region was found or not
+//------------------------------------------------------
 LinkedList findRegion(LinkedList list, const char *region_name)
 {
   assert(strlen(region_name) > 0);
@@ -191,16 +229,14 @@ LinkedList findRegion(LinkedList list, const char *region_name)
   currentNode = list->first;
 
 
-  while(count < list->size && result == 0) //might need to be <= list->size
+  while(count < list->size && result == 0) 
   {
-    //printf("REGION: %s, LIST SIZE: %i\n", currentNode->name, list->size);
     if(strcmp(region_name, currentNode->name) == 0)
     {
       result = 1;
       list->chosenRegion = currentNode;
       list->pickedRegion = 1;
       list->foundNewRegion = 1;
-      //verifyNodeOnly(*list->chosenRegion);
     }
     else
     {
@@ -223,7 +259,20 @@ LinkedList findRegion(LinkedList list, const char *region_name)
 
 
 
-//remove a region from list if it exists
+
+
+
+
+//------------------------------------------------------
+// removeNode
+//
+// PURPOSE: remove a region from linked list if it exists
+// INPUT PARAMETERS:
+//      list: linked list to remove node from
+//      region_name: name of region to find and remove
+// OUTPUT PARAMETERS:
+//      list: linked list that was passed to this function
+//------------------------------------------------------
 LinkedList removeNode(LinkedList list, const char *region_name)
 {
   assert(list != NULL);
@@ -243,12 +292,10 @@ LinkedList removeNode(LinkedList list, const char *region_name)
   verifyLList(list);  
 
 
-   while(count < list->size && result == 0) //might need to be <= list->size
-  //while(currentNode != NULL && result == 0)
+  while(count < list->size && result == 0) 
   {
     if(strcmp(region_name, currentNode->name) == 0)
     {
-
       // unchoose region to be destroyed if it is currently chosen
       if(list->pickedRegion == 1)
       {
@@ -265,50 +312,38 @@ LinkedList removeNode(LinkedList list, const char *region_name)
 
 
       result = 1;
-      //printf("#########1\n");
       if(previousNode == NULL) //first node
       {
         toRemove = currentNode;
         list->first = currentNode->next;  
-        //printf("#########2\n");
       }
       else
       {
         toRemove = currentNode;
         previousNode->next = currentNode->next;
-
-        //printf("#########3\n");
       }
-      //printf("Destroying region: %s\n\n", region_name);
-      //verifyNodeOnly(*toRemove);
 
       free(toRemove->region);
       free(toRemove->name);
-      //if(toRemove->myObjList->size > 0)
-      //{
       toRemove->myObjList = freePointers(toRemove->myObjList);  //free every node in object index linked list
-      //}
       free(toRemove->myObjList);
       free(toRemove);
-     
+      
     }
     else
     {
       count++;
       previousNode = currentNode;
       currentNode = currentNode->next;
-     
-      //printf("#########5\n");
     }
   }
-  verifyLList(list);  //--------------------------------------------------------------------------------------------------------------------------
+
+  verifyLList(list);  
 
   if(result)
   {
     list->size--;
-    //printf("#########6\n");
   }
-  //printf("#########7\n");
 
 
   assert(list != NULL);
@@ -321,32 +356,39 @@ LinkedList removeNode(LinkedList list, const char *region_name)
 
 
 
-// print of block addresses, amount of memory used by that block, and percentage of free memory left in that region
+
+
+
+//------------------------------------------------------
+// printRegions
+//
+// PURPOSE: prints out region names, blocks of memory and their size, and percentage of free space remaining.
+//          calls printPointers to print out memory blocks and free space
+// INPUT PARAMETERS:
+//      list: linked list to print data from
+//------------------------------------------------------
 void printRegions(LinkedList list)
 {
   assert(list != NULL);
 
   double percentFree;
-  //int intPercent;
   node *currentNode;
 
   currentNode = list->first;
   
   if(list->size > 0)
   {
-
     for(int i = 0; i < list->size; i++)
     {
       percentFree = currentNode->blockTotalSize - currentNode->usedBlocks; 
       percentFree = (percentFree / currentNode->blockTotalSize) * 100;
-      //intPercent = percentFree;
 
       printf("\nRegion name: %s\n", currentNode->name);
       if(currentNode->myObjList->size > 0)
       {
         printPointers(currentNode->myObjList);
       }
-      printf("Free blocks: %.2f%%\n", percentFree);  //need to add blocks allocated and block sizes.  %p for block pointers
+      printf("Free blocks: %.2f%%\n", percentFree); 
       currentNode = currentNode->next;
     }
     printf("\nEnd of regions list.\n\n");
@@ -358,12 +400,6 @@ void printRegions(LinkedList list)
     printf("Empty list.\n\n");
   }
 
- /* char *ptr1;
-  for(ptr1 = list->chosenRegion->region; ptr1 <= list->chosenRegion->endRegion; ptr1++)
-  {
-    printf("%c", (*ptr1));
-  }
-  printf("\n");*/
 
   assert(list != NULL);
 }
@@ -372,16 +408,30 @@ void printRegions(LinkedList list)
 
 
 
+
+
+//------------------------------------------------------
+// allocateBlock
+//
+// PURPOSE: allocate a block of memory with size given by block_size. calls findFreeBlocks
+//          to find enough contiguous free memory in the region
+// INPUT PARAMETERS:
+//      list: linked list to allocate new memory to
+//      block_size: amount of memory to search for and allocate
+// OUTPUT PARAMETERS:
+//      list: return list containing pointer if memory was allocated, NULL pointer if 
+//            not enough contiguous memory was found
+//------------------------------------------------------
 LinkedList allocateBlock(LinkedList list, unsigned short block_size)
 {
   assert(list->chosenRegion != NULL);
   assert(block_size > 0);
 
-  void *blockPtr = NULL; // remove null
+  void *blockPtr = NULL; 
   char *ptr1;
 
   //look for contiguous blocks of free bytes in list->chosenRegion
-  blockPtr = findFreeBlocks(*list->chosenRegion, block_size); //maybe remove asterisk *
+  blockPtr = findFreeBlocks(*list->chosenRegion, block_size); 
 
 
   if(blockPtr != NULL)
@@ -396,7 +446,6 @@ LinkedList allocateBlock(LinkedList list, unsigned short block_size)
     }
 
     verifyLList(list);
-    //list->chosenRegion->usedBlocks += block_size;
   }
   else
   {
@@ -405,15 +454,7 @@ LinkedList allocateBlock(LinkedList list, unsigned short block_size)
 
     verifyLList(list);
   }
-
-
-  //print whole region to test
-  /*for(ptr1 = list->chosenRegion->region; ptr1 < list->chosenRegion->region + list->chosenRegion->blockTotalSize; ptr1++)
-  {
-    printf("%c", (*ptr1));
-  }*/
-
-  //printf("\n");
+ 
 
   assert(list->chosenRegion != NULL);
   assert(block_size > 0);
@@ -424,6 +465,19 @@ LinkedList allocateBlock(LinkedList list, unsigned short block_size)
 
 
 
+
+
+//------------------------------------------------------
+// findFreeBlocks
+//
+// PURPOSE: called by allocateBlock to find enough contiguous memory in the currently chosen region
+// INPUT PARAMETERS:
+//      currentNode: node that is currently chosen
+//      block_size: amount of free memory to search for then allocate
+// OUTPUT PARAMETERS:
+//      startPtr: pointer to memory location that has enough free space, NULL if not
+//                enough contiguous memory was found
+//------------------------------------------------------
 char *findFreeBlocks(node currentNode, unsigned short block_size)
 {
   assert(block_size > 0);
@@ -441,11 +495,9 @@ char *findFreeBlocks(node currentNode, unsigned short block_size)
   found = 0;
 
 
-
-
   while(traverseCount < currentNode.blockTotalSize && found == 0)
   {
-    if(*currentPtr == 'X') //might need to initialise all spaces in region to something other than '0' either in linkedlist.c or regions.c
+    if(*currentPtr == 'X') 
     {
       emptyCount++;
     }
@@ -464,14 +516,8 @@ char *findFreeBlocks(node currentNode, unsigned short block_size)
     traverseCount++;
   }
 
-
-
-
   // verifyLList() is not called since this function is only passed a node, not a linked list
   verifyNodeOnly(currentNode);
-
-  //pointer arthmetic to traverse region and find block space
-  // http://www.cs.umanitoba.ca/~fbristow/lectures/comp2160/lecture23-mar22/lecture23-mar22.html?print-pdf#/
 
   if(found == 0)
   {
@@ -485,6 +531,19 @@ char *findFreeBlocks(node currentNode, unsigned short block_size)
 
 
 
+
+
+//------------------------------------------------------
+// rfreeHelper
+//
+// PURPOSE: called by rfree() to search for pointer block_ptr in current region then free that
+//          block of memory if it exists
+// INPUT PARAMETERS:
+//      list: linked list with a chosen region
+//      block_ptr: pointer to memory block to find and clear
+// OUTPUT PARAMETERS:
+//      list: linked list containing the current region
+//------------------------------------------------------
 LinkedList rfreeHelper(LinkedList list, void *block_ptr)
 {
   assert(list != NULL);
@@ -493,7 +552,7 @@ LinkedList rfreeHelper(LinkedList list, void *block_ptr)
   char *ptr1;
   char *ptr2;
   int size;
-  //printf("%p %p \n", block_ptr, list->chosenRegion->region);
+  
   size = findPtr(list->chosenRegion->myObjList, block_ptr);
 
   if(size > 0)
@@ -514,21 +573,26 @@ LinkedList rfreeHelper(LinkedList list, void *block_ptr)
 
   verifyLList(list);
 
-//printf("********************\n");
-
-  /*for(ptr1 = list->chosenRegion->region; ptr1 < list->chosenRegion->region + list->chosenRegion->blockTotalSize; ptr1++)
-  {
-    printf("%c", (*ptr1));
-  }*/
-
 
   assert(list != NULL);
   assert(block_ptr != NULL);
+
   return list;
 }
 
 
 
+
+//------------------------------------------------------
+// getPtrSize
+//
+// PURPOSE: find a pointer if the current region and return the amount of memory that it's using
+// INPUT PARAMETERS:
+//      list: linked list containing the current region to search in
+//      block_ptr: pointer to block of memory to search for
+// OUTPUT PARAMETERS:
+//      size: amount of memory taken up by block_ptr, and 0 if it wasn't found
+//------------------------------------------------------
 unsigned short getPtrSize(LinkedList list, void *block_ptr)
 {
   assert(list != NULL);
@@ -537,8 +601,6 @@ unsigned short getPtrSize(LinkedList list, void *block_ptr)
   unsigned short size;
 
   size = findPtr(list->chosenRegion->myObjList, block_ptr);
-
-  //assert(size > 0);
   verifyLList(list);
 
   assert(list != NULL);

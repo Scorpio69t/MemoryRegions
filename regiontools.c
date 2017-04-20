@@ -21,11 +21,19 @@
 
 #include "regions.h"
 #include "regiontools.h"
-//#include "linkedlist.h"
 
 
 
-//round region_size up to nearest multiple of 8
+
+
+//------------------------------------------------------
+// roundSize
+//
+// PURPOSE: round up any variables using r_size_t to the nearest
+//          multiple of 8
+// INPUT PARAMETERS:
+//      region_size: variable to round up
+//------------------------------------------------------
 r_size_t roundSize(r_size_t region_size)
 {
 	assert(region_size > 0);
@@ -47,7 +55,18 @@ r_size_t roundSize(r_size_t region_size)
 
 
 
-// invariants for regions
+
+
+
+//------------------------------------------------------
+// verifyObjIndex
+//
+// PURPOSE: invariants for checking region variables
+// INPUT PARAMETERS:
+//      myList: linked list of regions
+//		pickedRegion: boolean of whether a region has been chosen
+//      nodeCount: number of regions in linked list
+//------------------------------------------------------
 void verifyRegion(LinkedList myList, int pickedRegion, int nodeCount)
 {
 	assert(myList != NULL);
@@ -58,15 +77,26 @@ void verifyRegion(LinkedList myList, int pickedRegion, int nodeCount)
 
 
 
-//invariants for linkedlist
+
+
+
+
+
+//------------------------------------------------------
+// verifyLList
+//
+// PURPOSE: invariants for checking the linked list of regions
+// INPUT PARAMETERS:
+//      list: linked list of regions to check
+//------------------------------------------------------
 void verifyLList(LinkedList list)
 {
   assert(list != NULL);
-  //assert(list->first != NULL);
   assert(list->size > 0);
   assert(list->allocResult >= 0);
   assert(list->allocResult <= 1);
 
+  //call verifyNodeOnly() if a region has been chosen
   if(list->pickedRegion == 1)
   {
     verifyNodeOnly(*list->chosenRegion);
@@ -74,7 +104,19 @@ void verifyLList(LinkedList list)
 }
 
 
-//invariants for nodes currently selected
+
+
+
+
+
+//------------------------------------------------------
+// verifyNodeOnly
+//
+// PURPOSE: invariants for checking the currently selected node.
+//          usually called by verifyLList()
+// INPUT PARAMETERS:
+//      currentNode: node that was chosen
+//------------------------------------------------------
 void verifyNodeOnly(node currentNode)
 {
   assert(currentNode.region != NULL);
